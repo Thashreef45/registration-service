@@ -1,5 +1,5 @@
-// import dotenv from 'dotenv';
-// dotenv.config();
+import dotenv from 'dotenv';
+dotenv.config();
 
 export default (() => {
     console.log("[env] Environment variables have been injected from `.env`");
@@ -12,11 +12,11 @@ export default (() => {
         /** The connection URL of MongoDB database. */
         DATABASE_URL: process.env.DATABASE_URL as string,
         /** Secret to sign the access token with. */
-        JWT_SECRET: process.env.JWT_SECRET as string,
+        // JWT_SECRET: process.env.JWT_SECRET as string,
         /** Brokers defined for Kafka */
-        KAFKA_BROKERS: (process.env.KAFKA_BROKERS as string).split(','),
+        // KAFKA_BROKERS: (process.env.KAFKA_BROKERS as string).split(','),
         /** The URL of the frontend. */
-        FRONTEND_URL: process.env.FRONTEND_URL
+        // FRONTEND_URL: process.env.FRONTEND_URL
     };
 
     return env;
