@@ -17,6 +17,18 @@
       "forceConsistentCasingInFileNames": true,
       "strict": true,
       "noImplicitAny": true,
-      "skipLibCheck": true
-    }
+      "skipLibCheck": true,
+      "baseUrl": "./",
+      "paths": {
+        "~/*": ["src/*"],
+        "@infrastructure/*": ["src/infrastructure/*"],
+        "@interfaces/*": ["src/interfaces/*"],
+        "@presentation/*": ["./src/presentation/*"],
+        "@use-cases/*": ["src/use-cases/*"],
+        "@entities/*": ["src/domain/entities/*"]
+      }
+    },
+    "include": [
+      "./src",
+    ]
   }
