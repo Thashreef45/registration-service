@@ -1,10 +1,14 @@
 import { User } from "../../domain/entities/User.js";
-import UserRepository from "../../interfaces/repositories/IUserRepository.js";
+import IUserRepository from "../../interfaces/repositories/IUserRepository.js";
+import accountModel from "../database/mongodb/models/accountModel.js";
+import { createNewUserInput, createNewUserOutput } from "./repoInterface.js";
 
-export class UserRepositoryMongoDB implements UserRepository {
+
+export class UserRepositoryMongoDB implements IUserRepository {
     findById(lifeId: string): Promise<User> {
         // todo: fetch from mongo
-        
+
+
         const user = new User({
             lifeId: lifeId,
             name: "John Doe",
@@ -14,5 +18,16 @@ export class UserRepositoryMongoDB implements UserRepository {
         });
 
         return Promise.resolve(user);
+    }
+
+
+    async createNewUser({ name, email, phone, dob,lifeId }: createNewUserInput): Promise<createNewUserOutput | undefined> {
+        try {
+            const newAccount = new accountModel({ name, email, phone, dob ,lifeId})
+            let res = await newAccount.save()
+            return {success:true}
+        } catch (error) {
+            return {success:false}
+        }
     }
 }

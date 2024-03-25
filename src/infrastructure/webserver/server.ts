@@ -6,21 +6,23 @@ import cookieParser from 'cookie-parser';
 import { Server } from '../../interfaces/webserver/IServer.js';
 import env from '../config/environment.js';
 
-import HelloWorldRouter from "../../presentation/routers/HelloRouter.js";
+// import HelloWorldRouter from "../../presentation/routers/HelloRouter.js";
+import registerRouter from '../../presentation/routers/registerRouter.js';
+
 
 /**
  * Create an Express.js based server instance.
  */
 export class ExpressServer implements Server<Express> {
-    public app: Express;
-    public port: number;
+    private app: Express;
+    private port: number;
 
     constructor(port: number) {
         console.log("The environment port is: ", port);
         this.port = port;
         this.app = express();
 
-        // this.initializeCORS();
+        this.initializeCORS();
         this.initializeMiddlewares();
         this.initializeRoutes();
     }
@@ -37,11 +39,9 @@ export class ExpressServer implements Server<Express> {
     }
 
     private initializeRoutes() {
-        this.app.use("/ok", (req, res) => {
-            res.send("All works!");
-        });
-
-        this.app.use("/", HelloWorldRouter);
+        this.app.use('/register',registerRouter)
+        this.app.use("/health", (req, res) => res.send("All works!"));
+        // this.app.use("/", HelloWorldRouter);
     }
 
     private initializeErrorHandler() {
@@ -58,7 +58,8 @@ export class ExpressServer implements Server<Express> {
      * Start the server on the predefined port.
      * @param callback A callback function on success.
      */
-    async run(callback: () => void) {
+
+    public async run(callback: () => void) {
         this.app.listen(this.port, callback);
     }
 }

@@ -1,4 +1,4 @@
-export enum StatusCode {
+enum StatusCode {
     OK = 200,
     CREATED = 201,
     ACCEPTED = 202,
@@ -22,3 +22,5 @@ export enum StatusCode {
     SERVICE_UNAVAILABLE = 503,
     NOT_IMPLEMENTED = 501,
 }
+
+export default StatusCode

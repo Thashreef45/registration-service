@@ -10,7 +10,10 @@ import { UserRepositoryMongoDB } from "../../infrastructure/repositories/UserRep
 const userRepository = new UserRepositoryMongoDB();
 
 export const HelloWorld = asyncHandler(_HelloWorld);
+
 async function _HelloWorld(req: Request, res: Response) {
+
+
     const interactor = new HelloWorldInteractor({ userRepository });
     const output = await interactor.execute({
         message: "Hello World"

@@ -2,7 +2,7 @@
 // dotenv.config();
 
 import env from './environment.js';
-import connectDB from '../database/setup.js';
+import connectDB from '../database/mongodb/setup.js';
 
 async function init() {
     connectDB();

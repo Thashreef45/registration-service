@@ -6,14 +6,20 @@ export default class HelloWorld implements IUseCase<Input, Output> {
 
     constructor({ userRepository }: Dependencies) {
         this.userRepository = userRepository;
+        
     }
 
-    async execute(input: Input): Promise<Output | Error> {
-
+    async execute(input: Input): Promise<Output | Error > {
+ 
         const user = await this.userRepository.findById("abc");
-
-        return { message: "Hello World"};
+        // let data = this.userRepository.createNewUser({})
+        return {
+            message : "hey"
+        }
     }
+
+    // private
+    
 }
 
 interface Dependencies {
