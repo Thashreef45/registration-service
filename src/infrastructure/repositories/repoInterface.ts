@@ -1,17 +1,13 @@
-
-
 interface createNewUserInput {
-    name : string,email :string,phone : string,dob : string,lifeId:string
+  name: string;
+  email: string;
+  phone: string;
+  dob: string;
+  lifeId: string;
 }
 
 interface createNewUserOutput {
-    success : boolean
+  success: boolean;
 }
 
-
-
-export{
-    createNewUserInput,createNewUserOutput,
-}
-
-
+export { createNewUserInput, createNewUserOutput };

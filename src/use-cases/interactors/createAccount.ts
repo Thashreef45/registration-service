@@ -1,50 +1,43 @@
 import IUserRepository from "@interfaces/repositories/IUserRepository.js";
 import StatusCode from "../shared/StatusCodes.js";
-
+import crypto from "crypto";
 
 class CreateAccount {
-    private respository: any
-    constructor({ userRepository }: Dependencies) {
-        this.respository = userRepository
-    }
+  private respository: any;
+  constructor({ userRepository }: Dependencies) {
+    this.respository = userRepository;
+  }
 
+  async execute(data: Input): Promise<Output | Error> {
+    const newData = { ...data, lifeId: this.createLifeId() };
+    let res = await this.respository.createNewUser(newData);
+    if (res.success)
+      return { message: "User created", status: StatusCode.CREATED };
+    else return { message: "User already exists", status: StatusCode.CONFLICT };
+  }
 
-    async execute(data: Input): Promise<Output | Error> {
-        try {
-            const newData = { ...data, lifeId: this.createLifeId() }
-            let res = await this.respository.createNewUser(newData)
-            if(res.success) return { message: "User created", status: StatusCode.CREATED }
-            else return { message: "User created", status: StatusCode.CONFLICT }
-        } catch (error) {
-            // console.log(error,'error')
-            // return  { message: "User not created", status: StatusCode.CONFLICT }
-        }
-    }
-
-    private createLifeId() {
-
-        //generate lifeId (16 digit unique id ) --pending
-        return '1234567890123456'
-    }
-
+  private createLifeId() {
+    const random =
+      parseInt(crypto.randomBytes(7).toString("hex").toUpperCase(), 16) %
+      1000000000000000;
+    return random;
+  }
 }
 
-
-
 interface Input {
-    name: string
-    email: string,
-    phone: string,
-    dob: Date,
+  name: string;
+  email: string;
+  phone: string;
+  dob: Date;
 }
 
 interface Output {
-    message: string;
-    status: number
+  message: string;
+  status: number;
 }
 
 interface Dependencies {
-    userRepository: IUserRepository;
+  userRepository: IUserRepository;
 }
 
-export default CreateAccount
+export default CreateAccount;
