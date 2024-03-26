@@ -1,7 +1,7 @@
-import mongoose from 'mongoose';
+import mongoose, {Document, InferSchemaType} from 'mongoose';
 
 const accountSchema = new mongoose.Schema({
-    lifeId: {
+    accountId: {
         type: String,
         required: true,
         unique : true,
@@ -20,12 +20,16 @@ const accountSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    dob: {
+    dateOfBirth: {
         type: Date,
         required: true
-    },
-
+    }
 });
 
 const accountModel = mongoose.model('account', accountSchema);
 export default accountModel;
+
+/** Types */
+type AccountType = InferSchemaType<typeof accountSchema>;
+interface AccountDocument extends Document, AccountType {};
+export { AccountType, AccountDocument };
