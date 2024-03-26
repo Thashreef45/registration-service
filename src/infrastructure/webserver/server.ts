@@ -1,4 +1,4 @@
-import express, {Express} from 'express';
+import express, { Express } from 'express';
 // import dotenv from 'dotenv';
 import cors from 'cors';
 import logger from 'morgan';
@@ -6,7 +6,6 @@ import cookieParser from 'cookie-parser';
 import { Server } from '../../interfaces/webserver/IServer.js';
 import env from '../config/environment.js';
 
-// import HelloWorldRouter from "../../presentation/routers/HelloRouter.js";
 import registrationRouter from '../../presentation/routers/RegistrationRouter.js';
 
 /**
@@ -38,9 +37,8 @@ export class ExpressServer implements Server<Express> {
     }
 
     private initializeRoutes() {
-        this.app.use('/',registrationRouter)
+        this.app.use('/', registrationRouter)
         this.app.use("/health", (req, res) => res.send("All works!"));
-        // this.app.use("/", HelloWorldRouter);
     }
 
     private initializeErrorHandler() {
