@@ -7,8 +7,7 @@ import { Server } from '../../interfaces/webserver/IServer.js';
 import env from '../config/environment.js';
 
 // import HelloWorldRouter from "../../presentation/routers/HelloRouter.js";
-import registerRouter from '../../presentation/routers/registerRouter.js';
-
+import registrationRouter from '../../presentation/routers/RegistrationRouter.js';
 
 /**
  * Create an Express.js based server instance.
@@ -39,7 +38,7 @@ export class ExpressServer implements Server<Express> {
     }
 
     private initializeRoutes() {
-        this.app.use('/register',registerRouter)
+        this.app.use('/',registrationRouter)
         this.app.use("/health", (req, res) => res.send("All works!"));
         // this.app.use("/", HelloWorldRouter);
     }
