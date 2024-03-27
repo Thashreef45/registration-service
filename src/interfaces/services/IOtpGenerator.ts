@@ -1,3 +1,3 @@
-export interface IOtpGenerator {
+export interface IOTPGenerator {
   generate(length: number): string;
 }

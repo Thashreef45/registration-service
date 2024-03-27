@@ -3,15 +3,15 @@ import { IUseCase } from "../shared/IUseCase.js";
 import StatusCode from "../shared/StatusCodes.js";
 import { AppError } from "../shared/AppError.js";
 import IUserRepository from "../../interfaces/repositories/IUserRepository.js";
-import { IOtpGenerator } from "../../interfaces/services/IOtpGenerator.js";
+import { IOTPGenerator } from "../../interfaces/services/IOtpGenerator.js";
 
-export default class OTP_Generator implements IUseCase<Input, StatusCode> {
-  private readonly UserRepository: IUserRepository;
-  private readonly OtpGenerator: IOtpGenerator;
+export default class OTPGenerator implements IUseCase<Input, StatusCode> {
+  private readonly userRepository: IUserRepository;
+  private readonly otpGenerator: IOTPGenerator;
 
-  constructor(UserRepository: IUserRepository, OtpGenerator: IOtpGenerator) {
-    this.UserRepository = UserRepository;
-    this.OtpGenerator = OtpGenerator;
+  constructor({ userRepository, otpGenerator }: Dependencies) {
+    this.userRepository = userRepository;
+    this.otpGenerator = otpGenerator;
   }
 
   async execute({ name, phone, dateOfBirth }: Input): Promise<StatusCode> {
@@ -22,16 +22,16 @@ export default class OTP_Generator implements IUseCase<Input, StatusCode> {
     });
     const defaultOtpLength = 6;
 
-    const existingUser = await this.UserRepository.findUser(user);
+    const existingUser = await this.userRepository.findByPhone(phone);
     if (existingUser) {
       // https://www.upguard.com/blog/what-is-an-enumeration-attack
       throw new AppError("Invalid credentials.", StatusCode.BAD_REQUEST);
     }
 
-    const OTP = this.OtpGenerator.generate(defaultOtpLength);
+    const OTP = this.otpGenerator.generate(defaultOtpLength);
     user.OTP = OTP;
 
-    const accountStatus = await this.UserRepository.persist(user);
+    const accountStatus = await this.userRepository.persist(user);
     if (accountStatus !== StatusCode.CREATED) {
       throw new AppError("Invalid credentials.", accountStatus); //should change this into appropriate error code and message(probably mongo server error)
     }
@@ -39,10 +39,10 @@ export default class OTP_Generator implements IUseCase<Input, StatusCode> {
   }
 }
 
-// interface Dependencies {
-//   UserRepository: IUserRepository;
-//   OtpGenerator: IOtpGenerator;
-// }                        about to be deleted
+interface Dependencies {
+  userRepository: IUserRepository;
+  otpGenerator: IOTPGenerator;
+}
 
 interface Input {
   name: string;

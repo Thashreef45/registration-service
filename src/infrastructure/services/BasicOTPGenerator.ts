@@ -1,6 +1,6 @@
-import { IOtpGenerator } from "../../interfaces/services/IOtpGenerator.js";
+import { IOTPGenerator } from "../../interfaces/services/IOtpGenerator.js";
 
-export class GenerateOTP implements IOtpGenerator {
+export class BasicOTPGenerator implements IOTPGenerator {
   generate(length: number): string {
     let OTP = "";
     for (let i = 1; i <= length; i++)

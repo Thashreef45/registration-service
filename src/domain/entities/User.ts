@@ -19,15 +19,15 @@ export class User {
   phone: string;
   /** The date of birth of the user. */
   dateOfBirth: Date;
-  /** The date of birth of the user. */
+  /** The OTP of the user. */
   OTP?: string;
 
-  constructor({ accountId, name, email, phone, dateOfBirth, OTP }: UserParams) {
+  constructor({ accountId, name, email, phone, dateOfBirth }: UserParams) {
     this.accountId = accountId;
     this.name = name;
     this.email = email;
     this.phone = phone;
     this.dateOfBirth = dateOfBirth;
-    this.OTP = OTP;
+    this.OTP = "";
   }
 }
