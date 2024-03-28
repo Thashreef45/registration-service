@@ -4,14 +4,22 @@ import StatusCode from "../shared/StatusCodes.js";
 import { AppError } from "../shared/AppError.js";
 import IUserRepository from "../../interfaces/repositories/IUserRepository.js";
 import { IOTPGenerator } from "../../interfaces/services/IOtpGenerator.js";
+import { ISMSService } from "../../interfaces/services/ISMSSender.js";
+import { IOTPVerificationService } from "../../interfaces/services/IOTPVerificationService.js";
 
-export default class OTPGenerator implements IUseCase<Input, StatusCode> {
+export default class OTPVerificartionService
+  implements IUseCase<Input, StatusCode>
+{
   private readonly userRepository: IUserRepository;
-  private readonly otpGenerator: IOTPGenerator;
+  // private readonly otpGenerator: IOTPGenerator;
+  // private readonly smsSender: ISMSService;
+  private readonly twilioVerificationService;
 
-  constructor({ userRepository, otpGenerator }: Dependencies) {
+  constructor({ userRepository, twilioVerificationService }: Dependencies) {
     this.userRepository = userRepository;
-    this.otpGenerator = otpGenerator;
+    this.twilioVerificationService = twilioVerificationService;
+    // this.otpGenerator = otpGenerator;
+    // this.smsSender = smsSender;
   }
 
   async execute({ name, phone, dateOfBirth }: Input): Promise<StatusCode> {
@@ -20,7 +28,6 @@ export default class OTPGenerator implements IUseCase<Input, StatusCode> {
       phone,
       dateOfBirth,
     });
-    const defaultOtpLength = 6;
 
     const existingUser = await this.userRepository.findByPhone(phone);
     if (existingUser) {
@@ -28,9 +35,16 @@ export default class OTPGenerator implements IUseCase<Input, StatusCode> {
       throw new AppError("Invalid credentials.", StatusCode.BAD_REQUEST);
     }
 
-    const OTP = this.otpGenerator.generate(defaultOtpLength);
-    user.OTP = OTP;
+    // const OTP = this.otpGenerator.generate();
+    // user.OTP = OTP;
+    // const message = `the OTP for giggr registeration is ${OTP}`; //make this message fancy.
+    // await this.smsSender.sendSMS(phone, message);
 
+    // console.log("otp:", OTP);    //delete in future
+    const twilioRes = await this.twilioVerificationService.generateAndSend(
+      phone
+    );
+    console.log(twilioRes); // debugging
     const accountStatus = await this.userRepository.persist(user);
     if (accountStatus !== StatusCode.CREATED) {
       throw new AppError("Invalid credentials.", accountStatus); //should change this into appropriate error code and message(probably mongo server error)
@@ -41,7 +55,7 @@ export default class OTPGenerator implements IUseCase<Input, StatusCode> {
 
 interface Dependencies {
   userRepository: IUserRepository;
-  otpGenerator: IOTPGenerator;
+  twilioVerificationService: IOTPVerificationService;
 }
 
 interface Input {

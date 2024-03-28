@@ -1,3 +1,3 @@
 export interface IOTPGenerator {
-  generate(length: number): string;
+  generate(length?: number): string;
 }

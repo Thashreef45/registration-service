@@ -3,8 +3,8 @@ import mongoose, { Document, InferSchemaType } from "mongoose";
 const accountSchema = new mongoose.Schema({
   accountId: {
     type: String,
-    required: true,
-    unique: true,
+    required: false,
+    unique: true, //this should'nt be false
     length: 16,
   },
   name: {

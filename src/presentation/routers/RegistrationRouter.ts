@@ -6,5 +6,6 @@ const registrationRouter = Router();
 
 registrationRouter.post("/register", RegisterUser);
 registrationRouter.post("/getotp", OtpGenerator);
+// registrationRouter.post("/confirmotp");
 
 export default registrationRouter;

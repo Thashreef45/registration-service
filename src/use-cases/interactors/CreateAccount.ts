@@ -14,12 +14,17 @@ export default class CreateAccount implements IUseCase<Input, StatusCode> {
     this.accountIdGenerator = accountIdGenerator;
   }
 
-  async execute({ name, email, phone, dateOfBirth }: Input): Promise<StatusCode> {
+  async execute({
+    name,
+    email,
+    phone,
+    dateOfBirth,
+  }: Input): Promise<StatusCode> {
     const user = new User({
       name,
       email,
       phone,
-      dateOfBirth
+      dateOfBirth,
     });
 
     const existingUser = await this.userRepository.findUser(user);
