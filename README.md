@@ -11,6 +11,18 @@
 
 **This repository** hosts the backend side of the registration part of Giggr, written using Node.js. The complexity of this unit demands it to be an individual service of a larger part of the microservices-based architecture. This service is containerized using [Docker](https://www.docker.com/) and orchestrated using [Kubernetes](https://kubernetes.io/) with [Apache Kafka](https://kafka.apache.org/) serving as the asynchronous message broker between services.
 
+## 🧅 Architecture
+
+The repository is built on a variation of **clean architecture** proposed by Robert C. Martin following SOLID principles and a clean separation of enteprise logic from framework/libraries. The request flow is as follows:
+### [Presentation](/src/presentation/) > [Infrastructure](/src/infrastructure/) > [Use Cases](/src/use-cases/) + [Domain](/src/domain/)
+
+- **[Presentation](/src/presentation/)** holds the Express.js defined controllers, middlewares, routers, and validation schemas. This is where the user's request first reaches.
+    - **controllers** inject implementations of interfaces as dependencies to the interactors from use cases.
+- **[Infrastructure](/src/infrastructure/)** holds the implementations of the [interfaces](/src/interfaces/) defined for enterprise logic. For instance, `MongoUserRepo` may implement `IUserRepository`.
+- **[Use Cases](src/use-cases/)** are where the actual enterprise logic is defined, they only understand and can work with [domain entities](/src/domain/entities) and [interfaces](/src/interfaces/).
+
+The central entrypoint, ie: the Node.js server defined by Express is defined as part of [infrastructure/webserver](/src/infrastructure/webserver/). This is where the middlewares and routers are attached.
+
 ## 🪪 Registration
 
 The underlying implementation of the registration flow would be a traditional form of inputs that needs to be filled with the following information. It is divided into multiple stages to not suffocate the user with too many fields, we can also save the data along each step in a transient database.
