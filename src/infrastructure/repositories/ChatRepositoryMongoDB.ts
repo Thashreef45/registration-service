@@ -36,7 +36,7 @@ export default class ChatRepositoryMongoDB implements IChatRepository {
 
     async removeById(chatId: string): Promise<Chat | null> {
         try {
-            const removedChat = await ChatModel.findOneAndDelete({ id: chatId });
+            const removedChat = await ChatModel.findOneAndDelete({ id: chatId }).lean();
             return removedChat;
         } catch (error) {
             console.error("Error removing chat by ID:", error);
@@ -46,7 +46,7 @@ export default class ChatRepositoryMongoDB implements IChatRepository {
 
     async findById(chatId: string): Promise<Chat | null> {
         try {
-            const chat = await ChatModel.findOne({ id: chatId });
+            const chat = await ChatModel.findOne({ id: chatId }).lean();
             return chat;
         } catch (error) {
             console.error("Error finding chat by ID:", error);

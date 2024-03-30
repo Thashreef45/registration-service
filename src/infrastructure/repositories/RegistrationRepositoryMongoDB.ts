@@ -1,7 +1,7 @@
 import { Registration } from "../../domain/entities/Registration.js";
 import StatusCode from "../../use-cases/shared/StatusCodes.js";
 import IRegistrationRepository from "../../interfaces/repositories/IRegistrationRepository.js";
-import RegistrationModel from "../database/mongoose/models/Registration.js";
+import RegistrationModel, { RegistrationDocument } from "../database/mongoose/models/Registration.js";
 
 export default class RegistrationRepositoryMongoDB implements IRegistrationRepository {
 
@@ -37,7 +37,8 @@ export default class RegistrationRepositoryMongoDB implements IRegistrationRepos
 
     async removeByUUID(uuid: string): Promise<Registration | null> {
         try {
-            return await RegistrationModel.findOneAndDelete({ uuid });
+            const registrationDocument = await RegistrationModel.findOneAndDelete({ uuid });
+            return RegistrationRepositoryMongoDB.mapRegistrationToEntity(registrationDocument);
         } catch (error) {
             console.error("Error removing registration by UUID:", error);
             return null;
@@ -46,7 +47,8 @@ export default class RegistrationRepositoryMongoDB implements IRegistrationRepos
 
     async findByUUID(uuid: string): Promise<Registration | null> {
         try {
-            return await RegistrationModel.findOne({ uuid });
+            const registrationDocument = await RegistrationModel.findOne({ uuid });
+            return RegistrationRepositoryMongoDB.mapRegistrationToEntity(registrationDocument);
         } catch (error) {
             console.error("Error finding registration by UUID:", error);
             return null;
@@ -55,7 +57,8 @@ export default class RegistrationRepositoryMongoDB implements IRegistrationRepos
 
     async findByEmail(email: string): Promise<Registration | null> {
         try {
-            return await RegistrationModel.findOne({ email });
+            const registrationDocument = await RegistrationModel.findOne({ email });
+            return RegistrationRepositoryMongoDB.mapRegistrationToEntity(registrationDocument);
         } catch (error) {
             console.error("Error finding registration by email:", error);
             return null;
@@ -64,7 +67,8 @@ export default class RegistrationRepositoryMongoDB implements IRegistrationRepos
 
     async findByPhone(phone: string): Promise<Registration | null> {
         try {
-            return await RegistrationModel.findOne({ phone });
+            const registrationDocument = await RegistrationModel.findOne({ phone });
+            return RegistrationRepositoryMongoDB.mapRegistrationToEntity(registrationDocument);
         } catch (error) {
             console.error("Error finding registration by phone:", error);
             return null;
@@ -73,10 +77,27 @@ export default class RegistrationRepositoryMongoDB implements IRegistrationRepos
 
     async findRegistration(registration: Partial<Registration>): Promise<Registration | null> {
         try {
-            return await RegistrationModel.findOne(registration);
+            const registrationDocument = await RegistrationModel.findOne(registration);
+            return RegistrationRepositoryMongoDB.mapRegistrationToEntity(registrationDocument);
         } catch (error) {
             console.error("Error finding registration:", error);
             return null;
         }
+    }
+
+    private static mapRegistrationToEntity(mongooseRegistration: RegistrationDocument | null): Registration | null {
+        if (!mongooseRegistration) return null;
+
+        const registration = new Registration({
+            uuid: mongooseRegistration.uuid,
+            name: mongooseRegistration.name,
+            email: mongooseRegistration.email,
+            phone: mongooseRegistration.phone,
+            dateOfBirth: mongooseRegistration.dateOfBirth,
+            otpRequested: mongooseRegistration.otpRequested,
+            otpVerified: mongooseRegistration.otpVerified
+        })
+
+        return registration;
     }
 }
