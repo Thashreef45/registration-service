@@ -1,11 +1,11 @@
 interface RegistrationParams {
     uuid: string;
-    name: string;
+    name?: string;
     email?: string | null;
     phone?: string | null;
     dateOfBirth: Date;
-    otpRequested: boolean;
-    otpVerified: boolean;
+    otpRequested?: boolean;
+    otpVerified?: boolean;
 }
 
 /** Definition for a registration entity of the platform. */
@@ -13,7 +13,7 @@ export class Registration {
     /** A unique identifier assigned to a registration. */
     uuid: string;
     /** The full legal name of the registrant. */
-    name: string;
+    name?: string;
     /** The email address (personal, work, or academic) of the registrant. */
     email?: string | null;
     /** The phone number of the registrant. */
@@ -31,7 +31,7 @@ export class Registration {
         this.email = email;
         this.phone = phone;
         this.dateOfBirth = dateOfBirth;
-        this.otpRequested = otpRequested;
-        this.otpVerified = otpVerified;
+        this.otpRequested = otpRequested ?? false;
+        this.otpVerified = otpVerified ?? false;
     }
 }
