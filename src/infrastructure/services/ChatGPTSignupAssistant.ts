@@ -1,5 +1,5 @@
 import { Chat } from "../../domain/entities/Chat.js";
-import { ISignupAssistant, ResponseType } from "../../interfaces/services/ISIgnupAssistant.js";
+import { Fields, ISignupAssistant, ResponseType, Message } from "../../interfaces/services/ISIgnupAssistant.js";
 import StatusCode from "../../use-cases/shared/StatusCodes.js";
 import environment from "../config/environment.js";
 import OpenAI from "openai";
@@ -24,6 +24,14 @@ export class ChatGPTSignupAssistant implements ISignupAssistant {
     });
 
     private readonly openai: OpenAI;
+    private history: Message[] = [];
+
+    fields: Fields = {
+        name: null,
+        email: null,
+        phone: null
+    };
+
 
     constructor(signupToken: string) {
         this.openai = new OpenAI({
@@ -48,6 +56,12 @@ export class ChatGPTSignupAssistant implements ISignupAssistant {
             content: message
         });
 
+        this.history.push({
+            role: "user",
+            content: message,
+            field: null
+        });
+
         return true;
     }
 
@@ -67,11 +81,19 @@ export class ChatGPTSignupAssistant implements ISignupAssistant {
         this.context.messages.push({
             role: "assistant",
             content: responseRaw
-        })
+        });
 
         const processed = responseRaw.replaceAll("```json", "").replaceAll("```", "").trim();
         // todo: if parsing fails, we can rollback that user input with this.context.messages.pop().
         const responseJSON = JSON.parse(processed) as ResponseType;
+
+        this.fields = responseJSON.fields;
+
+        this.history.push({
+            role: "assistant",
+            content: responseJSON.message,
+            field: responseJSON.field
+        });
 
         return responseJSON;
     }
@@ -81,5 +103,9 @@ export class ChatGPTSignupAssistant implements ISignupAssistant {
             this.context.messages.pop();
         }
         return true;
+    }
+
+    getHistory(): Message[] {
+        return this.history;
     }
 }
