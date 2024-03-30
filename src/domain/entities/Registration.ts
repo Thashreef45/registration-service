@@ -1,8 +1,8 @@
 interface RegistrationParams {
     uuid: string;
     name: string;
-    email: string;
-    phone: string;
+    email?: string | null;
+    phone?: string | null;
     dateOfBirth: Date;
     otpRequested: boolean;
     otpVerified: boolean;
@@ -15,9 +15,9 @@ export class Registration {
     /** The full legal name of the registrant. */
     name: string;
     /** The email address (personal, work, or academic) of the registrant. */
-    email: string;
+    email?: string | null;
     /** The phone number of the registrant. */
-    phone: string;
+    phone?: string | null;
     /** The date of birth of the registrant. */
     dateOfBirth: Date;
     /** Indicates whether an OTP (One-Time Password) has been requested for the registration. */
