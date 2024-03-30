@@ -4,7 +4,7 @@ import { UserRepositoryMongoDB } from "../../infrastructure/repositories/UserRep
 import OTPVerificarionService from "../../use-cases/interactors/OTPCreator.js";
 import { BasicOTPGenerator } from "../../infrastructure/services/BasicOTPGenerator.js";
 import { TwilioSMSSender } from "../../infrastructure/services/TwilioSMSSender.js";
-import { TwilioOTPVerificationService } from "../../infrastructure/services/TwilioOTPVerificationService.js";
+import { TwilioOTPVerificationService } from "../../infrastructure/services/TwilioOTPManager.js";
 
 const userRepository = new UserRepositoryMongoDB();
 const otpGenerator = new BasicOTPGenerator();

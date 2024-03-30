@@ -1,5 +1,5 @@
 import IUserRepository from "../../interfaces/repositories/IUserRepository.js";
-import { IOTPVerificationService } from "../../interfaces/services/IOTPVerificationService.js";
+import { IOTPVerificationService } from "../../interfaces/services/IOTPManager.js";
 import { AppError } from "../shared/AppError.js";
 import { IUseCase } from "../shared/IUseCase.js";
 import StatusCode from "../shared/StatusCodes.js";

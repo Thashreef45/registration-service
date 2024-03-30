@@ -3,9 +3,9 @@ import { IUseCase } from "../shared/IUseCase.js";
 import StatusCode from "../shared/StatusCodes.js";
 import { AppError } from "../shared/AppError.js";
 import IUserRepository from "../../interfaces/repositories/IUserRepository.js";
-import { IOTPGenerator } from "../../interfaces/services/IOtpGenerator.js";
+import { IOTPGenerator } from "../../interfaces/services/IOTPGenerator.js";
 import { ISMSService } from "../../interfaces/services/ISMSSender.js";
-import { IOTPVerificationService } from "../../interfaces/services/IOTPVerificationService.js";
+import { IOTPVerificationService } from "../../interfaces/services/IOTPManager.js";
 
 export default class OTPCreatorService implements IUseCase<Input, StatusCode> {
   private readonly userRepository: IUserRepository;

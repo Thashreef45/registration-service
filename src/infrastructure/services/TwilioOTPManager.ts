@@ -2,7 +2,6 @@ import twilio from "twilio";
 import { IOTPManager } from "../../interfaces/services/IOTPManager.js";
 import StatusCode from "../../use-cases/shared/StatusCodes.js";
 import env from "../config/environment.js";
-import { AppError } from "../../use-cases/shared/AppError.js";
 
 export class TwilioOTPManager implements IOTPManager {
   private readonly twilioClient;
