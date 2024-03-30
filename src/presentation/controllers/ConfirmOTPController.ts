@@ -1,20 +1,20 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import { UserRepositoryMongoDB } from "../../infrastructure/repositories/UserRepositoryMongoDB.js";
-import { TwilioOTPVerificationService } from "../../infrastructure/services/TwilioOTPManager.js";
-import OTPVerificationInteractor from "../../use-cases/interactors/OTPVerification.js";
+import { TwilioOTPManager } from "../../infrastructure/services/TwilioOTPManager.js";
+import OTPVerificationInteractor from "../../use-cases/interactors/PhoneOTPVerify.js";
 import StatusCode from "../../use-cases/shared/StatusCodes.js";
 
 const userRepository = new UserRepositoryMongoDB();
-const twilioVerificationService = new TwilioOTPVerificationService();
+const twilioVerificationService = new TwilioOTPManager();
 
 export const ConfirmOTP = asyncHandler(_ConfirmOTP);
-
 async function _ConfirmOTP(req: Request, res: Response): Promise<void> {
   const interactor = new OTPVerificationInteractor({
     userRepository,
     twilioVerificationService,
   });
+  
   const { phone, OTP } = req.body;
 
   const status = await interactor.execute({ phone, OTP });

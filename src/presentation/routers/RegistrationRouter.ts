@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { RegisterUser } from "../controllers/RegistrationController.js";
 import { OtpGenerator } from "../controllers/OtpController.js";
-import OTPCreatorService from "../../use-cases/interactors/OTPCreator.js";
+import OTPCreatorService from "../../use-cases/interactors/PhoneOTPRequest.js";
 import { ConfirmOTP } from "../controllers/ConfirmOTPController.js";
 
 const registrationRouter = Router();
