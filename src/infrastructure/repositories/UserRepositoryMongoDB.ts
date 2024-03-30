@@ -1,7 +1,9 @@
 import StatusCode from "../../use-cases/shared/StatusCodes.js";
 import { User } from "../../domain/entities/User.js";
 import IUserRepository from "../../interfaces/repositories/IUserRepository.js";
-import Account, { AccountDocument } from "../database/mongoose/models/Account.js";
+import Account, {
+  AccountDocument,
+} from "../database/mongoose/models/Account.js";
 
 export class UserRepositoryMongoDB implements IUserRepository {
   async persist(user: User): Promise<StatusCode> {
@@ -88,7 +90,9 @@ export class UserRepositoryMongoDB implements IUserRepository {
     }
   }
 
-  private static mapUserToEntity(mongooseUser: AccountDocument | null): User | null {
+  private static mapUserToEntity(
+    mongooseUser: AccountDocument | null
+  ): User | null {
     if (!mongooseUser) return null;
 
     const user = new User({
@@ -96,7 +100,7 @@ export class UserRepositoryMongoDB implements IUserRepository {
       name: mongooseUser.name,
       email: mongooseUser.email,
       phone: mongooseUser.phone,
-      dateOfBirth: mongooseUser.dateOfBirth
+      dateOfBirth: mongooseUser.dateOfBirth,
     });
 
     return user;
