@@ -1,9 +1,9 @@
 interface Message {
     role: string;
-    message: string;
+    content: string;
 }
 
-interface ChatParams {
+export interface ChatParams {
     id: string;
     description: string;
     messages: Message[];
