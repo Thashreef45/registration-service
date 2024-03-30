@@ -11,6 +11,9 @@
       "module": "NodeNext",
       "rootDir": "./src",
       "moduleResolution": "NodeNext",
+      "lib": [
+        "ES2021"
+      ],
       "checkJs": true,
       "outDir": "./dist",
       "esModuleInterop": true,
