@@ -3,6 +3,7 @@ interface RegistrationParams {
     name: string;
     email: string;
     phone: string;
+    dateOfBirth: Date;
     otpRequested: boolean;
     otpVerified: boolean;
 }
@@ -17,16 +18,19 @@ export class Registration {
     email: string;
     /** The phone number of the registrant. */
     phone: string;
+    /** The date of birth of the registrant. */
+    dateOfBirth: Date;
     /** Indicates whether an OTP (One-Time Password) has been requested for the registration. */
     otpRequested: boolean;
     /** Indicates whether an OTP (One-Time Password) has been successfully verified for the registration. */
     otpVerified: boolean;
 
-    constructor({ uuid, name, email, phone, otpRequested, otpVerified }: RegistrationParams) {
+    constructor({ uuid, name, email, phone, dateOfBirth, otpRequested, otpVerified }: RegistrationParams) {
         this.uuid = uuid;
         this.name = name;
         this.email = email;
         this.phone = phone;
+        this.dateOfBirth = dateOfBirth;
         this.otpRequested = otpRequested;
         this.otpVerified = otpVerified;
     }
