@@ -4,6 +4,7 @@ interface Message {
 }
 
 interface ChatParams {
+    id: string;
     description: string;
     messages: Message[];
     initiated: boolean;
@@ -12,7 +13,9 @@ interface ChatParams {
 
 /** Definition for a chat entity within the platform. */
 export class Chat {
-    /** A brief description of the chat. This can also be an LLM initial prompt. */
+    /** A unique identifier for the chat to associate with a registration. */
+    id: string;
+    /** An array of messages exchanged within the chat. */
     description: string;
     /** An array of messages exchanged within the chat. */
     messages: Message[];
@@ -21,7 +24,8 @@ export class Chat {
     /** Indicates whether the chat has been closed. */
     closed: boolean;
 
-    constructor({ description, messages, initiated, closed }: ChatParams) {
+    constructor({ id, description, messages, initiated, closed }: ChatParams) {
+        this.id = id;
         this.description = description;
         this.messages = messages;
         this.initiated = initiated;
