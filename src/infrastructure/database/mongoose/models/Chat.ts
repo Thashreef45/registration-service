@@ -5,7 +5,7 @@ const messageSchema = new mongoose.Schema({
         type: String,
         default: ""
     },
-    message: {
+    content: {
         type: String,
         default: ""
     }
@@ -48,7 +48,7 @@ type ChatType = {
     description: string;
     messages: [{
         role: string;
-        message: string;
+        content: string;
     }];
     initiated: boolean;
     closed: boolean;
