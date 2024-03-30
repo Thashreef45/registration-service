@@ -3,7 +3,7 @@ dotenv.config();
 
 export default (() => {
   console.log("[env] Environment variables have been injected from `.env`");
-  
+
   const env = {
     /** The current environment of the Node.js application. (development / production) */
     NODE_ENV: process.env.NODE_ENV as string,
@@ -23,6 +23,10 @@ export default (() => {
     TWILIO_SID: process.env.TWILIO_SID as string,
     TWILIO_TOKEN: process.env.TWILIO_TOKEN as string,
     TWILIO_VERIFY_SERVICE_ID: process.env.TWILIO_VERIFY_SERVICE_ID as string,
+
+    //email for verification
+    MAIL_USERNAME: process.env.MAIL_USERNAME as string,
+    MAIL_PASS: process.env.MAIL_PASS as string,
   };
 
   return env;
