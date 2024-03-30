@@ -3,7 +3,7 @@ dotenv.config();
 
 export default (() => {
   console.log("[env] Environment variables have been injected from `.env`");
-
+  
   const env = {
     /** The current environment of the Node.js application. (development / production) */
     NODE_ENV: process.env.NODE_ENV as string,
@@ -11,6 +11,8 @@ export default (() => {
     PORT: Number(process.env.PORT as string),
     /** The connection URL of MongoDB database. */
     DATABASE_URL: process.env.DATABASE_URL as string,
+    /** OpenAI API Key used for GPT */
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY as string,
     /** Secret to sign the access token with. */
     // JWT_SECRET: process.env.JWT_SECRET as string,
     /** Brokers defined for Kafka */
