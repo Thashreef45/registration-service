@@ -1,5 +1,5 @@
 import { Chat } from "../../domain/entities/Chat.js";
-import { Fields, ISignupAssistant, ResponseType, Message } from "../../interfaces/services/ISIgnupAssistant.js";
+import { Fields, ISignupAssistant, ResponseType, Message } from "../../interfaces/services/ISignupAssistant.js";
 import StatusCode from "../../use-cases/shared/StatusCodes.js";
 import environment from "../config/environment.js";
 import OpenAI from "openai";
@@ -31,7 +31,6 @@ export class ChatGPTSignupAssistant implements ISignupAssistant {
         email: null,
         phone: null
     };
-
 
     constructor(signupToken: string) {
         this.openai = new OpenAI({
