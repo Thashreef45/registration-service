@@ -7,9 +7,7 @@ import { IOTPGenerator } from "../../interfaces/services/IOtpGenerator.js";
 import { ISMSService } from "../../interfaces/services/ISMSSender.js";
 import { IOTPVerificationService } from "../../interfaces/services/IOTPVerificationService.js";
 
-export default class OTPVerificartionService
-  implements IUseCase<Input, StatusCode>
-{
+export default class OTPCreatorService implements IUseCase<Input, StatusCode> {
   private readonly userRepository: IUserRepository;
   // private readonly otpGenerator: IOTPGenerator;
   // private readonly smsSender: ISMSService;

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import { UserRepositoryMongoDB } from "../../infrastructure/repositories/UserRepositoryMongoDB.js";
-import OTPVerificarionService from "../../use-cases/interactors/Otp.js";
+import OTPVerificarionService from "../../use-cases/interactors/OTPCreator.js";
 import { BasicOTPGenerator } from "../../infrastructure/services/BasicOTPGenerator.js";
 import { TwilioSMSSender } from "../../infrastructure/services/TwilioSMSSender.js";
 import { TwilioOTPVerificationService } from "../../infrastructure/services/TwilioOTPVerificationService.js";

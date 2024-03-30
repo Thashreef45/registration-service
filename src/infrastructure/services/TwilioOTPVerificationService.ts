@@ -21,6 +21,14 @@ export class TwilioOTPVerificationService implements IOTPVerificationService {
     }
   }
   async verify(phone: string, OTP: string): Promise<StatusCode> {
-    return StatusCode.ACCEPTED;
+    try {
+      await client.verify.v2
+        .services(env.TWILIO_VERIFY_SERVICE_ID)
+        .verificationChecks.create({ to: "+" + phone, code: OTP });
+      return StatusCode.OK;
+    } catch (error) {
+      console.log(error); //for debugging
+      return StatusCode.INTERNAL_ERROR;
+    }
   }
 }
