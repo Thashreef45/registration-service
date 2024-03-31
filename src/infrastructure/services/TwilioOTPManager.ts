@@ -19,7 +19,7 @@ export class TwilioOTPManager implements IOTPManager {
       await this.twilioClient.verify.v2
         .services(env.TWILIO_VERIFY_SERVICE_ID)
         .verifications.create({ to: "+" + phone, channel: "sms" });
-      return StatusCode.ACCEPTED;
+      return StatusCode.OK;
     } catch (error) {
       console.error(error);
       return StatusCode.INTERNAL_ERROR;
