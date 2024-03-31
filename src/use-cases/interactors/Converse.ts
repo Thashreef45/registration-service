@@ -21,38 +21,38 @@ export default class Converse implements IUseCase<Input, Output> {
     // verify signup id to be proper.
     const registration = await this.registrationRepository.findByUUID(signupId);
     if (!registration) {
-        throw new AppError("No registration found", StatusCode.NOT_FOUND);
+      throw new AppError("No registration found", StatusCode.NOT_FOUND);
     }
 
     // retrieve chat or create
     let chat = await this.chatRepository.findById(signupId);
     if (!chat) {
-        chat = this.signupAssistant.getContext();
-        chat.id = signupId;
-        const didPersist = await this.chatRepository.persist(chat);
-        if (didPersist != StatusCode.CREATED) {
-            throw new AppError("Could not persist chat.", StatusCode.INTERNAL_ERROR);
-        }
+      chat = this.signupAssistant.getContext();
+      chat.id = signupId;
+      const didPersist = await this.chatRepository.persist(chat);
+      if (didPersist != StatusCode.CREATED) {
+        throw new AppError("Could not persist chat.", StatusCode.INTERNAL_ERROR);
+      }
     }
 
     this.signupAssistant.recall(chat);
 
     this.signupAssistant.compose(message);
     const response = await this.signupAssistant.getResponse();
-    
+
     // persist
     chat = this.signupAssistant.getContext();
     chat.id = signupId;
 
     const mergedStatus = await this.chatRepository.update(chat);
     if (mergedStatus !== StatusCode.ACCEPTED) {
-        throw new AppError("Could not update chat.", mergedStatus);
+      throw new AppError("Could not update chat.", mergedStatus);
     }
 
     return {
-        reply: response.message,
-        field: response.field,
-        fields: response.fields
+      reply: response.message,
+      field: response.field,
+      fields: response.fields
     }
   }
 }
