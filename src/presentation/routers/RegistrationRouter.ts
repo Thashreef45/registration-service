@@ -1,13 +1,12 @@
 import { Router } from "express";
-import { RegisterUser } from "../controllers/RegistrationController.js";
-import { OtpGenerator } from "../controllers/OtpController.js";
-import OTPCreatorService from "../../use-cases/interactors/PhoneOTPRequest.js";
-import { ConfirmOTP } from "../controllers/ConfirmOTPController.js";
+import { ChatAssistant, ConfirmEmail, ConfirmPhone, RegisterUser, StartSignup, VerifyPhone } from "../controllers/RegistrationController.js";
 
 const registrationRouter = Router();
 
-registrationRouter.post("/register", RegisterUser);
-registrationRouter.post("/getotp", OtpGenerator);
-registrationRouter.post("/confirmotp", ConfirmOTP);
+registrationRouter.post("/signup", StartSignup);
+registrationRouter.post("/signup/phone", ConfirmPhone);
+registrationRouter.post("/signup/phone/verify", VerifyPhone);
+registrationRouter.post("/signup/chat", ChatAssistant);
+registrationRouter.post("/signup/email", ConfirmEmail);
 
 export default registrationRouter;
