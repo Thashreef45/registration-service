@@ -7,6 +7,7 @@ import { Server } from '../../interfaces/webserver/IServer.js';
 import env from '../config/environment.js';
 
 import registrationRouter from '../../presentation/routers/RegistrationRouter.js';
+import { errorMiddleware } from './error.js';
 
 /**
  * Create an Express.js based server instance.
@@ -23,6 +24,7 @@ export class ExpressServer implements Server<Express> {
         this.initializeCORS();
         this.initializeMiddlewares();
         this.initializeRoutes();
+        this.initializeErrorHandler();
     }
 
     /** Setup express.js specific configurations and middlewares. */
@@ -43,6 +45,7 @@ export class ExpressServer implements Server<Express> {
 
     private initializeErrorHandler() {
         // todo: apply error handler.
+        this.app.use(errorMiddleware);
     }
 
     /** Setup CORS based configurations using the middleware. */
