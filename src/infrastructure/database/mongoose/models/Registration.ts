@@ -8,7 +8,7 @@ const registrationSchema = new mongoose.Schema({
     },
     name: {
         type: String,
-        required: true,
+        required: false,
     },
     email: {
         type: String,
@@ -28,6 +28,11 @@ const registrationSchema = new mongoose.Schema({
         default: false
     },
     otpVerified: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
+    emailVerified: {
         type: Boolean,
         required: true,
         default: false

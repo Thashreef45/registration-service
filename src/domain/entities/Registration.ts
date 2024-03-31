@@ -6,6 +6,7 @@ interface RegistrationParams {
     dateOfBirth: Date;
     otpRequested?: boolean;
     otpVerified?: boolean;
+    emailVerified?: boolean;
 }
 
 /** Definition for a registration entity of the platform. */
@@ -24,8 +25,10 @@ export class Registration {
     otpRequested: boolean;
     /** Indicates whether an OTP (One-Time Password) has been successfully verified for the registration. */
     otpVerified: boolean;
+    /** Indicates whether email is verified. */
+    emailVerified: boolean;
 
-    constructor({ uuid, name, email, phone, dateOfBirth, otpRequested, otpVerified }: RegistrationParams) {
+    constructor({ uuid, name, email, phone, dateOfBirth, otpRequested, otpVerified, emailVerified }: RegistrationParams) {
         this.uuid = uuid;
         this.name = name;
         this.email = email;
@@ -33,5 +36,6 @@ export class Registration {
         this.dateOfBirth = dateOfBirth;
         this.otpRequested = otpRequested ?? false;
         this.otpVerified = otpVerified ?? false;
+        this.emailVerified = emailVerified ?? false;
     }
 }
