@@ -42,6 +42,14 @@ export class ChatGPTSignupAssistant implements ISignupAssistant {
 
     recall(context: Chat): boolean {
         this.context = context;
+        this.history = [];
+        for (let message of this.context.messages) {
+            if (message.role !== "system") {
+                const processed = message.content.replaceAll("```json", "").replaceAll("```", "").trim();
+                const responseJSON = JSON.parse(processed) as ResponseType;
+                this.history.push({ content: responseJSON.message, role: message.role as ("assistant" | "system" | "user"), field: responseJSON.field })
+            }
+        }
         return true;
     };
 
