@@ -5,7 +5,7 @@ import IRegistrationRepository from "../../interfaces/repositories/IRegistration
 import { Registration } from "../../domain/entities/Registration.js";
 import { IUUIDGenerator } from "../../interfaces/services/IUUIDGenerator.js";
 
-export default class StartSignupProcess implements IUseCase<Input, Output> {
+export default class InitiateRegistration implements IUseCase<Input, Output> {
   private readonly registrationRepository: IRegistrationRepository;
   private readonly uuidGenerator: IUUIDGenerator;
 
@@ -14,18 +14,16 @@ export default class StartSignupProcess implements IUseCase<Input, Output> {
     this.uuidGenerator = uuidGenerator;
   }
 
-  async execute({ dateOfBirth }: Input): Promise<Output> {
-
-    // todo: they must be older than 8
-    if (dateOfBirth > new Date()) {
-      throw new AppError("Given date is in the future.", StatusCode.BAD_REQUEST);
-    }
+  async execute({ entity, deviceId, locationId, networkId }: Input): Promise<Output> {
 
     const uuid = this.uuidGenerator.generate();
 
     const registration = new Registration({
       uuid,
-      dateOfBirth
+      entity,
+      deviceId,
+      locationId,
+      networkId
     });
 
     const didPersist = await this.registrationRepository.persist(registration);
@@ -45,8 +43,10 @@ interface Dependencies {
 }
 
 interface Input {
-  /** The single mandatory field to initiate signup process. */
-  dateOfBirth: Date;
+  entity: "individual" | "industry" | "institute";
+  deviceId: string;
+  locationId: string;
+  networkId: string;
 }
 
 interface Output {
