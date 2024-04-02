@@ -100,4 +100,13 @@ export default class RegistrationRepositoryMongoDB implements IRegistrationRepos
 
         return registration;
     }
+
+    async partialMerge(data:Registration) {
+        try {
+        await RegistrationModel.findOneAndUpdate({uuid:data.uuid},data)
+          return StatusCode.OK
+        } catch (error) {
+          return StatusCode.INTERNAL_ERROR
+        }
+      }
 }

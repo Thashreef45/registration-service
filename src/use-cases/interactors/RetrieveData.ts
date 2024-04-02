@@ -18,7 +18,7 @@ export default class StartSignupProcess implements IUseCase<Input, Output> {
         }
 
         return {
-            dateOfBirth: registration.dateOfBirth,
+            dateOfBirth: registration.dateOfBirth ,
             name: registration.name ?? null,
             email: registration.email ?? null,
             emailVerified: registration.emailVerified ?? false,
@@ -38,7 +38,7 @@ interface Input {
 }
 
 interface Output {
-    dateOfBirth: Date;
+    dateOfBirth: Date | null;
     name: string | null;
     email: string | null;
     emailVerified: boolean;
