@@ -18,6 +18,7 @@ import ChatRepositoryMongoDB from "../../infrastructure/repositories/ChatReposit
 import { ChatGPTSignupAssistant } from "../../infrastructure/services/ChatGPTSignupAssistant.js";
 import ConfirmEmailForLink from "../../use-cases/interactors/ConfirmEmailForLink.js";
 import { EmailSender } from "../../infrastructure/services/EmailSender.js";
+import GetConversation from "../../use-cases/interactors/GetConversation.js";
 
 const userRepository = new UserRepositoryMongoDB();
 const accountIdGenerator = new GiggrSnowflake();
@@ -117,6 +118,21 @@ async function _ChatAssistant(req: Request, res: Response): Promise<void> {
   const data = {
     signupId,
     message: req.body.message
+  } 
+
+  const output = await interactor.execute(data);
+  res.json(output);
+}
+
+export const ChatAssistantGet = asyncHandler(_ChatAssistantGet);
+async function _ChatAssistantGet(req: Request, res: Response): Promise<void> {
+  const signupId = req.headers["authorization"]?.slice(7) || "";
+  const signupAssistant = new ChatGPTSignupAssistant(signupId);
+
+  const interactor = new GetConversation({ registrationRepository, chatRepository, signupAssistant });
+
+  const data = {
+    signupId
   } 
 
   const output = await interactor.execute(data);
