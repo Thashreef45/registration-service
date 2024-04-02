@@ -1,44 +1,93 @@
-import mongoose, { Document, InferSchemaType } from 'mongoose';
+import mongoose, { Document, Schema } from 'mongoose';
 
-const registrationSchema = new mongoose.Schema({
-    uuid: {
+interface Metadata {
+  deviceId: string;
+  networkId: string;
+  locationId: string;
+  platformId: string;
+  metaChecksum?: string;
+}
+
+interface Email {
+  id?: string;
+  otp?: string;
+  isVerified: boolean;
+}
+
+interface Phone {
+  number?: string;
+  otp?: string;
+  isVerified: boolean;
+}
+
+interface RegistrationAttributes {
+    uuid: string;
+    entity: "individual" | "industry" | "institute";
+    metadata: Metadata;
+    name?: string;
+    email: Email;
+    phone: Phone;
+    dateOfBirth?: Date;
+    isCompleted: boolean;
+}
+
+interface RegistrationDocument extends Document, RegistrationAttributes {}
+
+const registrationSchema = new Schema<RegistrationDocument>({
+  uuid: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  entity: {
+    type: String,
+    enum: ["individual", "industry", "institute"],
+    required: true
+  },
+  metadata: {
+    deviceId: {
       type: String,
-      required: false,
-      unique: true,
+      required: true
     },
-    name: {
+    networkId: {
       type: String,
-      required: true,
+      required: true
     },
-    email: {
-      id: { type: String, required: false, unique: false },
-      isVerified: {
-        type: Boolean,
-        default: false,
-      },
+    locationId: {
+      type: String,
+      required: true
     },
-    phone: {
-      no: { type: String, required: false, unique: false },
-      isVerified: {
-        type: Boolean,
-        default: false,
-      },
-      dateOfBirth: {
-        type: Date,
-        required: true,
-      },
+    platformId: {
+      type: String,
+      required: true
     },
-    mailOTP: String,
-    isRegistered: {
+    metaChecksum: String
+  },
+  name: String,
+  email: {
+    id: String,
+    otp: String,
+    isVerified: {
       type: Boolean,
-      default: false,
-    },
-  });
+      default: false
+    }
+  },
+  phone: {
+    number: String,
+    otp: String,
+    isVerified: {
+      type: Boolean,
+      default: false
+    }
+  },
+  dateOfBirth: Date,
+  isCompleted: {
+    type: Boolean,
+    default: false
+  }
+});
 
-const registrationModel = mongoose.model('Registration', registrationSchema);
-export default registrationModel;
+const RegistrationModel = mongoose.model<RegistrationDocument>('Registration', registrationSchema);
+export default RegistrationModel;
 
-/** Types */
-type RegistrationType = InferSchemaType<typeof registrationSchema>;
-interface RegistrationDocument extends Document, RegistrationType { };
-export { RegistrationType, RegistrationDocument };
+export { RegistrationDocument, RegistrationAttributes };

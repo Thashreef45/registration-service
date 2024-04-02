@@ -43,10 +43,4 @@ export default interface IRegistrationRepository {
      * @param phone 
      */
     findByPhone(phone: string): Promise<Registration | null>;
-
-    /**
-     * Update user with new datas.
-     * param phone 
-     */
-    partialMerge(data: Registration): Promise<StatusCode>
 }
