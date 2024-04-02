@@ -1,7 +1,7 @@
 import { Registration } from "../../domain/entities/Registration.js";
 import StatusCode from "../../use-cases/shared/StatusCodes.js";
 import IRegistrationRepository from "../../interfaces/repositories/IRegistrationRepository.js";
-import RegistrationModel, { RegistrationDocument } from "../database/mongoose/models/Registration.js";
+import RegistrationModel, { RegistrationDocument } from "../database/mongoose/models/Registration.Model.js";
 
 export default class RegistrationRepositoryMongoDB implements IRegistrationRepository {
 
@@ -90,23 +90,17 @@ export default class RegistrationRepositoryMongoDB implements IRegistrationRepos
 
         const registration = new Registration({
             uuid: mongooseRegistration.uuid,
-            name: mongooseRegistration.name,
-            email: mongooseRegistration.email,
-            phone: mongooseRegistration.phone,
-            dateOfBirth: mongooseRegistration.dateOfBirth,
-            otpRequested: mongooseRegistration.otpRequested,
-            otpVerified: mongooseRegistration.otpVerified
-        })
+            entity: mongooseRegistration.entity,
+            deviceId: mongooseRegistration.metadata.deviceId,
+            locationId: mongooseRegistration.metadata.locationId,
+            networkId: mongooseRegistration.metadata.networkId
+        });
+
+        registration.name = mongooseRegistration.name;
+        registration.email = mongooseRegistration.email;
+        registration.phone = mongooseRegistration.phone;
+        registration.dateOfBirth = mongooseRegistration.dateOfBirth;
 
         return registration;
     }
-
-    async partialMerge(data:Registration) {
-        try {
-        await RegistrationModel.findOneAndUpdate({uuid:data.uuid},data)
-          return StatusCode.OK
-        } catch (error) {
-          return StatusCode.INTERNAL_ERROR
-        }
-      }
 }
