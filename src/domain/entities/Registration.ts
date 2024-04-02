@@ -1,41 +1,72 @@
 interface RegistrationParams {
-    uuid?: string | null;
+    /* generated data */
+    uuid: string;
+
+    /* metadata */
+    deviceId: string; // Creep.js like Fingerprint
+    networkId: string; // IP
+    locationId: string; // Country + State
+    platformId: string; // OS + Browser
+    metaChecksum?: string; // Checksum
+
+    /* entered data */
+    entity: "individual" | "industry" | "institute";
     name?: string;
-    email?: string | null;
-    phone?: string | null;
-    dateOfBirth?: Date | null ;
-    otpRequested?: boolean;
-    otpVerified?: boolean;
+    email?: string;
     emailVerified?: boolean;
+    phone?: string;
+    phoneVerifed?: boolean;
+    dateOfBirth?: Date;
 }
 
-/** Definition for a registration entity of the platform. */
+/** Definition for an user entity of the platform. */
 export class Registration {
-    /** A unique identifier assigned to a registration. */
-    uuid: string | null;
-    /** The full legal name of the registrant. */
-    name?: string | null;
-    /** The email address (personal, work, or academic) of the registrant. */
-    email?: string | null;
-    /** The phone number of the registrant. */
-    phone?: string | null;
-    /** The date of birth of the registrant. */
-    dateOfBirth: Date | null;
-    /** Indicates whether an OTP (One-Time Password) has been requested for the registration. */
-    otpRequested: boolean;
-    /** Indicates whether an OTP (One-Time Password) has been successfully verified for the registration. */
-    otpVerified: boolean;
-    /** Indicates whether email is verified. */
-    emailVerified: boolean;
+    /** A 16-digit numeric identifier assigned to a user of the platform. */
+    uuid: string;
 
-    constructor({ uuid, name, email, phone, dateOfBirth, otpRequested, otpVerified, emailVerified }: RegistrationParams) {
-        this.uuid = uuid ?? null;
-        this.name = name ?? null;
-        this.email = email ?? null;
-        this.phone = phone ?? null;
-        this.dateOfBirth = dateOfBirth ?? null;
-        this.otpRequested = otpRequested ?? false;
-        this.otpVerified = otpVerified ?? false;
-        this.emailVerified = emailVerified ?? false;
+    /** The entity signing up for the platform. */
+    entity: "individual" | "industry" | "institute";
+
+    /** The metadata collected from the client. */
+    metadata: {
+        deviceId: string; // Creep.js like Fingerprint
+        networkId: string; // IP
+        locationId: string; // Country + State
+        platformId: string; // OS + Browser
+        metaChecksum?: string; // Checksum
+    };
+
+    /** The full legal name of the user. */
+    name?: string;
+    /** The email address (personal, work, or academic) of the user. */
+    email: {
+        id?: string;
+        otp?: string;
+        isVerified: boolean;
+    };
+    /** The phone number of the user. */
+    phone: {
+        number?: string;
+        otp?: string;
+        isVerified: boolean;
+    };
+    /** The date of birth of the user. */
+    dateOfBirth?: Date;
+
+    /**  Whether the registration process is complete or not.  */
+    isCompleted: boolean;
+
+    constructor({ uuid, entity, deviceId, networkId, locationId, platformId, name, email, phone, dateOfBirth, emailVerified, phoneVerifed }: UserParams) {
+
+        this.uuid = uuid;
+        this.entity = entity;
+        this.metadata = { deviceId, networkId, locationId, platformId };
+
+        this.name = name;
+        this.email = { id: email, isVerified: emailVerified || false };
+        this.phone = { number: phone, isVerified: phoneVerifed || false };
+        this.dateOfBirth = dateOfBirth;
+
+        this.isCompleted = false;
     }
 }
