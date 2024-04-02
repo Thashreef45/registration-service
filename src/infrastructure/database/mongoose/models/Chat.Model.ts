@@ -9,7 +9,7 @@ const messageSchema = new mongoose.Schema({
         type: String,
         default: ""
     }
-})
+}, { _id: false });
 
 const chatSchema = new mongoose.Schema({
     id: {

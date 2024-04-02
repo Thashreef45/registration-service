@@ -6,7 +6,8 @@ import cookieParser from 'cookie-parser';
 import { Server } from '../../interfaces/webserver/IServer.js';
 import env from '../config/environment.js';
 
-import registrationRouter from '../../presentation/routers/RegistrationRouter.js';
+import registrationRouter from '../../presentation/routers/IndividualSignupRouter.js';
+import { errorMiddleware } from './error.js';
 
 /**
  * Create an Express.js based server instance.
@@ -23,6 +24,7 @@ export class ExpressServer implements Server<Express> {
         this.initializeCORS();
         this.initializeMiddlewares();
         this.initializeRoutes();
+        this.initializeErrorHandler();
     }
 
     /** Setup express.js specific configurations and middlewares. */
@@ -37,12 +39,13 @@ export class ExpressServer implements Server<Express> {
     }
 
     private initializeRoutes() {
-        this.app.use('/', registrationRouter)
-        this.app.use("/health", (req, res) => res.send("All works!"));
+        this.app.use('/signup/individual', registrationRouter)
+        this.app.use("/health", (req, res) => res.json("All works!"));
     }
 
     private initializeErrorHandler() {
         // todo: apply error handler.
+        this.app.use(errorMiddleware);
     }
 
     /** Setup CORS based configurations using the middleware. */

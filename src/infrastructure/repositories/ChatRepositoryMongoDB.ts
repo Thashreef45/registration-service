@@ -1,7 +1,7 @@
 import { Chat } from "../../domain/entities/Chat.js";
 import StatusCode from "../../use-cases/shared/StatusCodes.js";
 import IChatRepository from "../../interfaces/repositories/IChatRepository.js";
-import ChatModel from "../database/mongoose/models/Chat.js";
+import ChatModel from "../database/mongoose/models/Chat.Model.js";
 
 export default class ChatRepositoryMongoDB implements IChatRepository {
     async persist(chat: Chat): Promise<StatusCode> {
