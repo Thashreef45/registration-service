@@ -6,7 +6,7 @@ import cookieParser from 'cookie-parser';
 import { Server } from '../../interfaces/webserver/IServer.js';
 import env from '../config/environment.js';
 
-import registrationRouter from '../../presentation/routers/RegistrationRouter.js';
+import registrationRouter from '../../presentation/routers/IndividualSignupRouter.js';
 import { errorMiddleware } from './error.js';
 
 /**
