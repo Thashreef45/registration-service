@@ -45,10 +45,16 @@ export class ChatGPTSignupAssistant implements ISignupAssistant {
         this.history = [];
         for (let message of this.context.messages) {
             if (message.role !== "system") {
-                const processed = message.content.replaceAll("```json", "").replaceAll("```", "").trim();
-                const responseJSON = JSON.parse(processed) as ResponseType;
-                this.history.push({ content: responseJSON.message, role: message.role as ("assistant" | "system" | "user"), field: responseJSON.field })
+                if (message.role === "assistant") {
+                    const processed = message.content.replaceAll("```json", "").replaceAll("```", "").trim();
+                    const responseJSON = JSON.parse(processed) as ResponseType;
+                    this.fields = responseJSON.fields;
+                    this.history.push({ content: responseJSON.message, role: "assistant", field: responseJSON.field })
+                } else if (message.role === "user") {
+                    this.history.push({ content: message.content, role: "user", field: null })
+                }
             }
+
         }
         return true;
     };
