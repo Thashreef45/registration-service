@@ -29,6 +29,7 @@ export class UserRepositoryMongoDB implements IUserRepository {
     }
   }
 
+
   async remove(user: User): Promise<StatusCode> {
     try {
       await Account.deleteOne({ accountId: user.accountId });
@@ -105,4 +106,6 @@ export class UserRepositoryMongoDB implements IUserRepository {
 
     return user;
   }
+
+  
 }

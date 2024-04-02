@@ -39,8 +39,8 @@ export class ExpressServer implements Server<Express> {
     }
 
     private initializeRoutes() {
-        this.app.use('/', registrationRouter)
-        this.app.use("/health", (req, res) => res.send("All works!"));
+        this.app.use('/signup/individual', registrationRouter)
+        this.app.use("/health", (req, res) => res.json("All works!"));
     }
 
     private initializeErrorHandler() {

@@ -13,7 +13,7 @@ export default interface IRegistrationRepository {
      * @param registration 
      */
     merge(registration: Registration): Promise<StatusCode>;
-    
+
     /**
      * Removes a registration entity from the database.
      * @param registration
@@ -43,4 +43,10 @@ export default interface IRegistrationRepository {
      * @param phone 
      */
     findByPhone(phone: string): Promise<Registration | null>;
+
+    /**
+     * Update user with new datas.
+     * param phone 
+     */
+    partialMerge(data: Registration): Promise<StatusCode>
 }

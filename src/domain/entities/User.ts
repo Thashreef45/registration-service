@@ -1,4 +1,5 @@
 interface UserParams {
+  
   accountId?: string | null;
   name: string;
   email?: string | null;
