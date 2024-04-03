@@ -4,7 +4,7 @@ interface Metadata {
   deviceId: string;
   networkId: string;
   locationId: string;
-  platformId: string;
+  platformId?: string;
   metaChecksum?: string;
 }
 
@@ -28,7 +28,7 @@ interface RegistrationAttributes {
     email: Email;
     phone: Phone;
     dateOfBirth?: Date;
-    isCompleted: boolean;
+    giggrId?: string;
 }
 
 interface RegistrationDocument extends Document, RegistrationAttributes {}
@@ -57,10 +57,7 @@ const registrationSchema = new Schema<RegistrationDocument>({
       type: String,
       required: true
     },
-    platformId: {
-      type: String,
-      required: true
-    },
+    platformId: String,
     metaChecksum: String
   },
   name: String,
@@ -81,10 +78,7 @@ const registrationSchema = new Schema<RegistrationDocument>({
     }
   },
   dateOfBirth: Date,
-  isCompleted: {
-    type: Boolean,
-    default: false
-  }
+  giggrId: String
 });
 
 const RegistrationModel = mongoose.model<RegistrationDocument>('Registration', registrationSchema);
