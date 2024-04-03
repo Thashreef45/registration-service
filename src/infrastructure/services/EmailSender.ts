@@ -1,4 +1,4 @@
-import { IEmailService } from "../../interfaces/services/IEmailSender.js";
+import { IEmailService } from "../../interfaces/services/IEmailService.js";
 import StatusCode from "../../use-cases/shared/StatusCodes.js";
 import nodemailer from "nodemailer";
 import environment from "../config/environment.js";
