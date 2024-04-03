@@ -14,7 +14,7 @@ export default class RetrieveRegistration implements IUseCase<Input, Registratio
     async execute({ signupId }: Input): Promise<Registration> {
 
         const registration = await this.registrationRepository.findByUUID(signupId);
-        if (!registration) {
+        if (!registration || registration.giggrId) {
             throw new AppError("No registration found", StatusCode.NOT_FOUND);
         }
 

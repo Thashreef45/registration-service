@@ -16,7 +16,7 @@ export default class RequestPhoneOTP implements IUseCase<Input, Output> {
   async execute({ signupId, phone }: Input): Promise<Output> {
 
     const registration = await this.registrationRepository.findByUUID(signupId);
-    if (!registration) {
+    if (!registration || registration.giggrId) {
         throw new AppError("No registration found", StatusCode.NOT_FOUND);
     }
 
@@ -26,6 +26,10 @@ export default class RequestPhoneOTP implements IUseCase<Input, Output> {
 
     // todo: make sure phone number is valid
     if (phone && !registration.phone.number) {
+      const doesPhoneExist = await this.registrationRepository.findByPhone(phone);
+      if (doesPhoneExist) {
+          throw new AppError("Credentials are invalid.", StatusCode.BAD_REQUEST);
+      }
       registration.phone.number = phone;
     }
 

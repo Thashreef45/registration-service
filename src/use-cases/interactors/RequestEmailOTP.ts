@@ -2,7 +2,7 @@ import { IUseCase } from "../shared/IUseCase.js";
 import StatusCode from "../shared/StatusCodes.js";
 import { AppError } from "../shared/AppError.js";
 import IRegistrationRepository from "../../interfaces/repositories/IRegistrationRepository.js";
-import { IEmailService } from "../../interfaces/services/IEmailSender.js";
+import { IEmailService } from "../../interfaces/services/IEmailService.js";
 
 export default class RequestEmailOTP implements IUseCase<Input, Output> {
     private readonly registrationRepository: IRegistrationRepository;
@@ -16,7 +16,7 @@ export default class RequestEmailOTP implements IUseCase<Input, Output> {
     async execute({ signupId, email }: Input): Promise<Output> {
 
         const registration = await this.registrationRepository.findByUUID(signupId);
-        if (!registration) {
+        if (!registration || registration.giggrId) {
             throw new AppError("No registration found", StatusCode.NOT_FOUND);
         }
     
@@ -26,6 +26,10 @@ export default class RequestEmailOTP implements IUseCase<Input, Output> {
     
         // todo: make sure phone number is valid
         if (email && !registration.email.id) {
+          const doesEmailExist = await this.registrationRepository.findByEmail(email);
+          if (doesEmailExist) {
+              throw new AppError("Credentials are invalid.", StatusCode.BAD_REQUEST);
+          }
           registration.email.id = email;
         }
     
@@ -34,7 +38,7 @@ export default class RequestEmailOTP implements IUseCase<Input, Output> {
         }
     
         // todo: otpManager service
-        registration.email.otp = "2256";
+        registration.email.otp = this.GenerateOTP()
 
         const otpStatus = await this.emailService.sendEmail(
             registration.email.id,
@@ -51,7 +55,11 @@ export default class RequestEmailOTP implements IUseCase<Input, Output> {
           throw new AppError("Could not update database.", StatusCode.INTERNAL_ERROR);
         }
     
-        return { message: "Successfully verified email." };
+        return { message: "OTP has been sent to email." };
+      }
+
+      private GenerateOTP = () => {
+        return Math.random().toString().split("").slice(2,8).join("") 
       }
 }
 

@@ -18,6 +18,7 @@ export default class InitiateRegistration implements IUseCase<Input, Output> {
 
     const uuid = this.uuidGenerator.generate();
 
+    // todo: consider checking the database for the same unique fingerprint
     const registration = new Registration({
       uuid,
       entity,

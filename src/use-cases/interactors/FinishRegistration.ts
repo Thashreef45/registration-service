@@ -16,11 +16,25 @@ export default class FinishRegistration implements IUseCase<Input, Output> {
   async execute({ signupId }: Input): Promise<Output> {
 
     const registration = await this.registrationRepository.findByUUID(signupId);
-    if (!registration) {
-        throw new AppError("No registration found", StatusCode.NOT_FOUND);
+    if (!registration || registration.giggrId) {
+      throw new AppError("No registration found", StatusCode.NOT_FOUND);
+    }
+
+    if (!registration.name || !registration.dateOfBirth || !registration.email || !registration.phone) {
+      throw new AppError("All fields are not filled.", StatusCode.BAD_REQUEST);
+    }
+
+    if (!registration.email.isVerified) {
+      throw new AppError("Email id is not verified.", StatusCode.BAD_REQUEST);
+    }
+    
+    if (!registration.phone.isVerified) {
+      throw new AppError("Phone number is not verified.", StatusCode.BAD_REQUEST);
     }
     
     const giggrId = await this.accountIdGenerator.generate();
+
+    registration.giggrId = giggrId;
 
     const updation = await this.registrationRepository.merge(registration);
     if (updation != StatusCode.OK) {

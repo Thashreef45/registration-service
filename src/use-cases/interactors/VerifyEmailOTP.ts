@@ -13,10 +13,11 @@ export default class VerifyEmailOTP implements IUseCase<Input, Output> {
   async execute({ signupId, otp }: Input): Promise<Output> {
 
     const registration = await this.registrationRepository.findByUUID(signupId);
-    if (!registration) {
+    if (!registration || registration.giggrId) {
         throw new AppError("No registration found", StatusCode.NOT_FOUND);
     }
     
+    // todo: implement timeSafeEqual
     const verificationResult = registration.email.otp === otp;
     if (!verificationResult) {
       throw new AppError("Could not verify OTP.", StatusCode.UNAUTHORIZED);

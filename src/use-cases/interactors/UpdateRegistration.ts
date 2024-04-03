@@ -13,7 +13,7 @@ export default class UpdateRegistration implements IUseCase<Input, Output> {
     async execute({ signupId, name, email, phone, dateOfBirth }: Input): Promise<Output> {
 
         const registration = await this.registrationRepository.findByUUID(signupId);
-        if (!registration) {
+        if (!registration || registration.giggrId) {
             throw new AppError("No registration found", StatusCode.NOT_FOUND);
         }
 
@@ -23,14 +23,29 @@ export default class UpdateRegistration implements IUseCase<Input, Output> {
 
         // todo: optionally could force change a verified email
         if (email && !registration.email.isVerified) {
+            const doesEmailExist = await this.registrationRepository.findByEmail(email);
+            if (doesEmailExist) {
+                throw new AppError("Credentials are invalid.", StatusCode.BAD_REQUEST);
+            }
             registration.email.id = email;
+            // todo: depending on entity, must be validated again.
         }
 
         if (phone && !registration.phone.isVerified) {
+            const doesPhoneExist = await this.registrationRepository.findByPhone(phone);
+            if (doesPhoneExist) {
+                throw new AppError("Credentials are invalid.", StatusCode.BAD_REQUEST);
+            }
             registration.phone.number = phone;
         }
 
         if (dateOfBirth) {
+            const currentDate = new Date();
+            const ageInYears = currentDate.getFullYear() - dateOfBirth.getFullYear();
+            
+            if (ageInYears > 100 || ageInYears < 8) {
+                throw new AppError("Age exceeds limits (must be between 100 and 8)", StatusCode.BAD_REQUEST);
+            }
             registration.dateOfBirth = dateOfBirth;
         }
 
