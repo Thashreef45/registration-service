@@ -6,7 +6,7 @@ interface RegistrationParams {
     deviceId: string; // Creep.js like Fingerprint
     networkId: string; // IP
     locationId: string; // Country + State
-    platformId: string; // OS + Browser
+    platformId?: string; // OS + Browser
     metaChecksum?: string; // Checksum
 
     /* entered data */
@@ -17,11 +17,13 @@ interface RegistrationParams {
     phone?: string;
     phoneVerifed?: boolean;
     dateOfBirth?: Date;
+
+    giggrId?: string;
 }
 
 /** Definition for an user entity of the platform. */
 export class Registration {
-    /** A 16-digit numeric identifier assigned to a user of the platform. */
+    /** A unique identifier for transient users. */
     uuid: string;
 
     /** The entity signing up for the platform. */
@@ -32,7 +34,7 @@ export class Registration {
         deviceId: string; // Creep.js like Fingerprint
         networkId: string; // IP
         locationId: string; // Country + State
-        platformId: string; // OS + Browser
+        platformId?: string; // OS + Browser
         metaChecksum?: string; // Checksum
     };
 
@@ -53,10 +55,10 @@ export class Registration {
     /** The date of birth of the user. */
     dateOfBirth?: Date;
 
-    /**  Whether the registration process is complete or not.  */
-    isCompleted: boolean;
+    /**  Only when the registration process is complete.  */
+    giggrId?: string;
 
-    constructor({ uuid, entity, deviceId, networkId, locationId, platformId, name, email, phone, dateOfBirth, emailVerified, phoneVerifed }: UserParams) {
+    constructor({ uuid, entity, deviceId, networkId, locationId, platformId, name, email, phone, dateOfBirth, emailVerified, phoneVerifed, giggrId }: RegistrationParams) {
 
         this.uuid = uuid;
         this.entity = entity;
@@ -67,6 +69,6 @@ export class Registration {
         this.phone = { number: phone, isVerified: phoneVerifed || false };
         this.dateOfBirth = dateOfBirth;
 
-        this.isCompleted = false;
+        this.giggrId = giggrId;
     }
 }

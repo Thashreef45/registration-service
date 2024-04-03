@@ -93,7 +93,8 @@ export default class RegistrationRepositoryMongoDB implements IRegistrationRepos
             entity: mongooseRegistration.entity,
             deviceId: mongooseRegistration.metadata.deviceId,
             locationId: mongooseRegistration.metadata.locationId,
-            networkId: mongooseRegistration.metadata.networkId
+            networkId: mongooseRegistration.metadata.networkId,
+            giggrId: mongooseRegistration.giggrId
         });
 
         registration.name = mongooseRegistration.name;

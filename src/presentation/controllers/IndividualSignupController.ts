@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 
-import { GiggrSnowflake } from "../../infrastructure/services/GiggrSnowflakeAccountIdGenerator.js";
+import { NanoGiggrIdGenerator } from "../../infrastructure/services/NanoGiggrIdGenerator.js";
 import InitiateRegistration from "../../use-cases/interactors/InitiateRegistration.js";
 import RegistrationRepositoryMongoDB from "../../infrastructure/repositories/RegistrationRepositoryMongoDB.js";
 import { CryptoUUIDGenerator } from "../../infrastructure/services/CryptoUUIDGenerator.js";
@@ -19,7 +19,9 @@ import RetrieveRegistration from "../../use-cases/interactors/RetrieveRegistrati
 import VerifyEmailOTP from "../../use-cases/interactors/VerifyEmailOTP.js";
 import FinishRegistration from "../../use-cases/interactors/FinishRegistration.js";
 
-const accountIdGenerator = new GiggrSnowflake();
+import {InitiateRegistrationRequest, RequestOTPRequest, UpdateRegistrationRequest, VerifyOTPRequest} from "../schemas/RegistrationSchemas.js";
+
+const accountIdGenerator = new NanoGiggrIdGenerator();
 const registrationRepository = new RegistrationRepositoryMongoDB();
 const uuidGenerator = new CryptoUUIDGenerator();
 const otpManager = new TwilioOTPManager();
@@ -59,7 +61,7 @@ async function _ChatAssistantGet(req: Request, res: Response): Promise<void> {
 }
 
 export const InitiateRegistrationPost = asyncHandler(_InitiateRegistrationPost);
-async function _InitiateRegistrationPost(req: Request, res: Response) {
+async function _InitiateRegistrationPost(req: InitiateRegistrationRequest, res: Response) {
   const interactor = new InitiateRegistration({ registrationRepository, uuidGenerator });
 
   // todo: req.metadata
@@ -82,7 +84,7 @@ async function _RetrieveRegistrationGet(req: Request, res: Response) {
 
 
 export const UpdateRegistrationPatch = asyncHandler(_UpdateRegistrationPatch)
-async function _UpdateRegistrationPatch(req: Request, res: Response) {
+async function _UpdateRegistrationPatch(req: UpdateRegistrationRequest, res: Response) {
   const interactor = new UpdateRegistration({ registrationRepository });
 
   const output = await interactor.execute({
@@ -98,16 +100,16 @@ async function _UpdateRegistrationPatch(req: Request, res: Response) {
 }
 
 export const RequestOTPGet = asyncHandler(_ReqOTPGet)
-async function _ReqOTPGet(req: Request, res: Response) {
+async function _ReqOTPGet(req: RequestOTPRequest, res: Response) {
   const field = req.params.field as "phone" | "email";
 
   if (field === "email") {
     const interactor = new RequestEmailOTP({ registrationRepository, emailService });
-    const output = interactor.execute({ signupId: req.signupId });
+    const output = await interactor.execute({ signupId: req.signupId });
     res.json(output);
   } else if (field === "phone") {
     const interactor = new RequestPhoneOTP({ registrationRepository, otpManager });
-    const output = interactor.execute({ signupId: req.signupId });
+    const output = await interactor.execute({ signupId: req.signupId });
     res.json(output);
   } else {
     res.status(400).json({ message: ":field must be phone/email" })
@@ -115,17 +117,17 @@ async function _ReqOTPGet(req: Request, res: Response) {
 }
 
 export const VerifyOTPPost = asyncHandler(_VerifyOTPPost)
-async function _VerifyOTPPost(req: Request, res: Response) {
-  const field = req.params.field as "phone" | "email";
-  const otp = req.body.otp as string;
+async function _VerifyOTPPost(req: VerifyOTPRequest, res: Response) {
+  const field = req.params.field;
+  const otp = req.body.otp;
 
   if (field === "email") {
     const interactor = new VerifyEmailOTP({ registrationRepository });
-    const output = interactor.execute({ signupId: req.signupId, otp });
+    const output = await interactor.execute({ signupId: req.signupId, otp });
     res.json(output);
   } else if (field === "phone") {
     const interactor = new VerifyPhoneOTP({ registrationRepository, otpManager });
-    const output = interactor.execute({ signupId: req.signupId, otp });
+    const output = await interactor.execute({ signupId: req.signupId, otp });
     res.json(output);
   } else {
     res.status(400).json({ message: ":field must be phone/email" })
@@ -135,6 +137,6 @@ async function _VerifyOTPPost(req: Request, res: Response) {
 export const FinishRegistrationPost = asyncHandler(_FinishRegistrationPost)
 async function _FinishRegistrationPost(req: Request, res: Response) {
   const interactor = new FinishRegistration({ registrationRepository, accountIdGenerator })
-  const output = interactor.execute({ signupId: req.signupId });
+  const output = await interactor.execute({ signupId: req.signupId });
   res.json(output);
 }
