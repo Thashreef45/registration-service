@@ -6,7 +6,7 @@ import cookieParser from 'cookie-parser';
 import { Server } from '../../interfaces/webserver/IServer.js';
 import env from '../config/environment.js';
 
-import registrationRouter from '../../presentation/routers/IndividualSignupRouter.js';
+import registrationRouter from '../../presentation/routers/RegistrationRouter.js';
 import { errorMiddleware } from './error.js';
 
 /**
@@ -39,7 +39,7 @@ export class ExpressServer implements Server<Express> {
     }
 
     private initializeRoutes() {
-        this.app.use('/signup/individual', registrationRouter)
+        this.app.use('/signup', registrationRouter)
         this.app.use("/health", (req, res) => res.json("All works!"));
     }
 
