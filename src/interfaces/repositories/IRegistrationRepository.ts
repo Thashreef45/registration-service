@@ -43,4 +43,10 @@ export default interface IRegistrationRepository {
      * @param phone 
      */
     findByPhone(phone: string): Promise<Registration | null>;
+
+    /**
+     * Attempt to retrieve a full registration entity from a partial one.
+     * @param registration
+     */
+    findRegistration(registration: Partial<Registration>): Promise<Registration | null>;
 }

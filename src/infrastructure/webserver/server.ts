@@ -3,6 +3,7 @@ import express, { Express } from 'express';
 import cors from 'cors';
 import logger from 'morgan';
 import cookieParser from 'cookie-parser';
+import ratelimit from 'express-rate-limit';
 import { Server } from '../../interfaces/webserver/IServer.js';
 import env from '../config/environment.js';
 
@@ -22,6 +23,7 @@ export class ExpressServer implements Server<Express> {
         this.app = express();
 
         this.initializeCORS();
+        this.initializeRatelimits();
         this.initializeMiddlewares();
         this.initializeRoutes();
         this.initializeErrorHandler();
@@ -38,11 +40,13 @@ export class ExpressServer implements Server<Express> {
         }
     }
 
+    /** Setup the touch points where data flows to. */
     private initializeRoutes() {
-        this.app.use('/signup', registrationRouter)
+        this.app.use('/signup', registrationRouter);
         this.app.use("/health", (req, res) => res.json("All works!"));
     }
 
+    /** Setup handlers to deal with errors. */
     private initializeErrorHandler() {
         // todo: apply error handler.
         this.app.use(errorMiddleware);
@@ -54,11 +58,21 @@ export class ExpressServer implements Server<Express> {
         this.app.use(cors());
     }
 
+    /** Setup API ratelimiting. */
+    private initializeRatelimits() {
+        // todo: Change it to 5 minutes at a later date.
+        const limiter = ratelimit({
+            windowMs: 2 * 60 * 1000,
+            max: 100,
+          });
+          
+          this.app.use(limiter);
+    }
+
     /**
      * Start the server on the predefined port.
      * @param callback A callback function on success.
      */
-
     public async run(callback: () => void) {
         this.app.listen(this.port, callback);
     }

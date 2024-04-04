@@ -23,6 +23,7 @@ interface Phone {
 interface RegistrationAttributes {
     uuid: string;
     entity: "individual" | "industry" | "institute";
+    role: "administrator" | "user";
     metadata: Metadata;
     name?: string;
     email: Email;
@@ -42,6 +43,11 @@ const registrationSchema = new Schema<RegistrationDocument>({
   entity: {
     type: String,
     enum: ["individual", "industry", "institute"],
+    required: true
+  },
+  role: {
+    type: String,
+    enum: ["administrator", "user"],
     required: true
   },
   metadata: {
