@@ -14,7 +14,7 @@ export default (() => {
     /** OpenAI API Key used for GPT */
     OPENAI_API_KEY: process.env.OPENAI_API_KEY as string,
     /** Secret to sign the access token with. */
-    // JWT_SECRET: process.env.JWT_SECRET as string,
+    JWT_SECRET: process.env.JWT_SECRET as string,
     /** Brokers defined for Kafka */
     // KAFKA_BROKERS: (process.env.KAFKA_BROKERS as string).split(','),
     /** The URL of the frontend. */

@@ -32,9 +32,15 @@ export default class FinishRegistration implements IUseCase<Input, Output> {
       throw new AppError("Phone number is not verified.", StatusCode.BAD_REQUEST);
     }
     
+    if (!registration.approval.isApproved) {
+      throw new AppError(`Awaiting approval from ${registration.approval!.isFrom}.`, StatusCode.BAD_REQUEST);
+    }
+    
     const giggrId = await this.accountIdGenerator.generate();
 
     registration.giggrId = giggrId;
+
+    // urgent fixme: Send email after registration.
 
     const updation = await this.registrationRepository.merge(registration);
     if (updation != StatusCode.OK) {

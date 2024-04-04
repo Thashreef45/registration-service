@@ -19,7 +19,12 @@ import RetrieveRegistration from "../../use-cases/interactors/RetrieveRegistrati
 import VerifyEmailOTP from "../../use-cases/interactors/VerifyEmailOTP.js";
 import FinishRegistration from "../../use-cases/interactors/FinishRegistration.js";
 
-import {InitiateRegistrationRequest, RequestOTPRequest, UpdateRegistrationRequest, VerifyOTPRequest} from "../schemas/RegistrationSchemas.js";
+import { InitiateRegistrationRequest, RequestOTPRequest, UpdateRegistrationRequest, VerifyOTPRequest } from "../schemas/RegistrationSchemas.js";
+import RequestApproval from "../../use-cases/interactors/RequestApproval.js";
+import { JWTTokenGenerator } from "../../infrastructure/services/ApprovalTokenManager.js";
+import { TwilioSMSSender } from "../../infrastructure/services/TwilioSMSSender.js";
+import environment from "../../infrastructure/config/environment.js";
+import AcceptApproval from "../../use-cases/interactors/AcceptApproval.js";
 
 const accountIdGenerator = new NanoGiggrIdGenerator();
 const registrationRepository = new RegistrationRepositoryMongoDB();
@@ -27,6 +32,15 @@ const uuidGenerator = new CryptoUUIDGenerator();
 const otpManager = new TwilioOTPManager();
 const chatRepository = new ChatRepositoryMongoDB();
 const emailService = new EmailSender();
+const smsService = new TwilioSMSSender();
+
+// urgent fixme:
+interface IndividualApprovalPayload {
+  email?: string;
+  phone?: string;
+  uuid: string;
+}
+const individualApprovalManager = new JWTTokenGenerator<IndividualApprovalPayload>(environment.JWT_SECRET);
 
 
 export const ChatAssistant = asyncHandler(_ChatAssistant);
@@ -138,5 +152,31 @@ export const FinishRegistrationPost = asyncHandler(_FinishRegistrationPost)
 async function _FinishRegistrationPost(req: Request, res: Response) {
   const interactor = new FinishRegistration({ registrationRepository, accountIdGenerator })
   const output = await interactor.execute({ signupId: req.signupId });
+  res.json(output);
+}
+
+export const RequestApprovalPost = asyncHandler(_RequestApprovalPost);
+async function _RequestApprovalPost(req: Request, res: Response) {
+  const { phone, email } = req.body;
+
+  const interactor = new RequestApproval({ registrationRepository, smsService, emailService, approvalTokenManager: individualApprovalManager, uuidGenerator });
+  const output = await interactor.execute({ signupId: req.signupId, phone, email });
+  
+  res.json(output);
+}
+
+export const AcceptApprovalPost = asyncHandler(_AcceptApprovalPost);
+async function _AcceptApprovalPost(req: Request, res: Response) {
+  const { token } = req.body;
+
+  const interactor = new AcceptApproval({
+    registrationRepository,
+    smsService,
+    approvalTokenManager: individualApprovalManager,
+    emailService
+  });
+  
+  const output = await interactor.execute({ signupId: req.signupId, token });
+  
   res.json(output);
 }

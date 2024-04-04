@@ -95,6 +95,10 @@ export default class RegistrationRepositoryMongoDB implements IRegistrationRepos
             deviceId: mongooseRegistration.metadata.deviceId,
             locationId: mongooseRegistration.metadata.locationId,
             networkId: mongooseRegistration.metadata.networkId,
+            needsApproval: mongooseRegistration.approval.isRequired,
+            needsApprovalFrom: mongooseRegistration.approval.isFrom,
+            requestedApproval: mongooseRegistration.approval.isRequested,
+            isApproved: mongooseRegistration.approval.isApproved,
             giggrId: mongooseRegistration.giggrId
         });
 

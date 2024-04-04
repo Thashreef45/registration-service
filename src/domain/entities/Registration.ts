@@ -21,10 +21,10 @@ interface RegistrationParams {
 
     giggrId?: string;
 
-    // needsApproval?: boolean;
-    // needsApprovalFrom?: "guardian" | "administrator";
-    // requestedApproval?: boolean;
-    // isApproved: boolean;
+    needsApproval: boolean;
+    needsApprovalFrom?: "guardian" | "administrator";
+    requestedApproval?: boolean;
+    isApproved: boolean;
 }
 
 /** Definition for an user entity of the platform. */
@@ -66,14 +66,15 @@ export class Registration {
     /**  Only when the registration process is complete.  */
     giggrId?: string;
 
-    // approval: {
-    //     isRequired: boolean;
-    //     isRequested?: boolean;
-    //     isFrom?: "guardian" | "administrator";
-    //     isApproved: boolean;
-    // }
+    /** Whether the account awaits approval from a guardian or an organization approval. */
+    approval: {
+        isRequired: boolean;
+        isRequested?: boolean;
+        isFrom?: "guardian" | "administrator";
+        isApproved: boolean;
+    }
 
-    constructor({ uuid, entity, role, deviceId, networkId, locationId, platformId, name, email, phone, dateOfBirth, emailVerified, phoneVerifed, giggrId }: RegistrationParams) {
+    constructor({ uuid, entity, role, deviceId, networkId, locationId, platformId, name, email, phone, dateOfBirth, emailVerified, phoneVerifed, needsApproval, needsApprovalFrom, requestedApproval, isApproved, giggrId }: RegistrationParams) {
 
         this.uuid = uuid;
         this.entity = entity;
@@ -84,6 +85,13 @@ export class Registration {
         this.email = { id: email, isVerified: emailVerified || false };
         this.phone = { number: phone, isVerified: phoneVerifed || false };
         this.dateOfBirth = dateOfBirth;
+
+        this.approval = {
+            isRequired: needsApproval,
+            isRequested: requestedApproval,
+            isFrom: needsApprovalFrom,
+            isApproved: isApproved
+        }
 
         this.giggrId = giggrId;
 
