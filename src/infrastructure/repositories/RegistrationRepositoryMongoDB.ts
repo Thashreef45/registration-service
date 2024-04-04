@@ -57,7 +57,7 @@ export default class RegistrationRepositoryMongoDB implements IRegistrationRepos
 
     async findByEmail(email: string): Promise<Registration | null> {
         try {
-            const registrationDocument = await RegistrationModel.findOne({ email });
+            const registrationDocument = await RegistrationModel.findOne({ "email.id": email });
             return RegistrationRepositoryMongoDB.mapRegistrationToEntity(registrationDocument);
         } catch (error) {
             console.error("Error finding registration by email:", error);
@@ -67,7 +67,7 @@ export default class RegistrationRepositoryMongoDB implements IRegistrationRepos
 
     async findByPhone(phone: string): Promise<Registration | null> {
         try {
-            const registrationDocument = await RegistrationModel.findOne({ phone });
+            const registrationDocument = await RegistrationModel.findOne({ "phone.number": phone });
             return RegistrationRepositoryMongoDB.mapRegistrationToEntity(registrationDocument);
         } catch (error) {
             console.error("Error finding registration by phone:", error);
