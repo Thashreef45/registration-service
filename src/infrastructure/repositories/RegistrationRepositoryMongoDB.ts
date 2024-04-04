@@ -91,6 +91,7 @@ export default class RegistrationRepositoryMongoDB implements IRegistrationRepos
         const registration = new Registration({
             uuid: mongooseRegistration.uuid,
             entity: mongooseRegistration.entity,
+            role: mongooseRegistration.role,
             deviceId: mongooseRegistration.metadata.deviceId,
             locationId: mongooseRegistration.metadata.locationId,
             networkId: mongooseRegistration.metadata.networkId,

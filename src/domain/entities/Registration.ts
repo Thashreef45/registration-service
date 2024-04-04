@@ -11,6 +11,7 @@ interface RegistrationParams {
 
     /* entered data */
     entity: "individual" | "industry" | "institute";
+    role: "administrator" | "user";
     name?: string;
     email?: string;
     emailVerified?: boolean;
@@ -19,6 +20,11 @@ interface RegistrationParams {
     dateOfBirth?: Date;
 
     giggrId?: string;
+
+    // needsApproval?: boolean;
+    // needsApprovalFrom?: "guardian" | "administrator";
+    // requestedApproval?: boolean;
+    // isApproved: boolean;
 }
 
 /** Definition for an user entity of the platform. */
@@ -28,6 +34,8 @@ export class Registration {
 
     /** The entity signing up for the platform. */
     entity: "individual" | "industry" | "institute";
+    /** The role of the entity for their account. */
+    role: "administrator" | "user";
 
     /** The metadata collected from the client. */
     metadata: {
@@ -58,10 +66,18 @@ export class Registration {
     /**  Only when the registration process is complete.  */
     giggrId?: string;
 
-    constructor({ uuid, entity, deviceId, networkId, locationId, platformId, name, email, phone, dateOfBirth, emailVerified, phoneVerifed, giggrId }: RegistrationParams) {
+    // approval: {
+    //     isRequired: boolean;
+    //     isRequested?: boolean;
+    //     isFrom?: "guardian" | "administrator";
+    //     isApproved: boolean;
+    // }
+
+    constructor({ uuid, entity, role, deviceId, networkId, locationId, platformId, name, email, phone, dateOfBirth, emailVerified, phoneVerifed, giggrId }: RegistrationParams) {
 
         this.uuid = uuid;
         this.entity = entity;
+        this.role = role;
         this.metadata = { deviceId, networkId, locationId, platformId };
 
         this.name = name;
@@ -70,5 +86,10 @@ export class Registration {
         this.dateOfBirth = dateOfBirth;
 
         this.giggrId = giggrId;
+
+        // this.approval = {
+        //     isRequired: 
+        //     isApproved: isApproved ?? false 
+        // };
     }
 }
