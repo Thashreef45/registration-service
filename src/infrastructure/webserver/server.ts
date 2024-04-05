@@ -8,7 +8,11 @@ import { Server } from '../../interfaces/webserver/IServer.js';
 import env from '../config/environment.js';
 
 import registrationRouter from '../../presentation/routers/RegistrationRouter.js';
+import loginRouter from '../../presentation/routers/LoginRouter.js';
+
 import { errorMiddleware } from './error.js';
+
+import nocache from 'nocache';
 
 /**
  * Create an Express.js based server instance.
@@ -25,6 +29,7 @@ export class ExpressServer implements Server<Express> {
         this.initializeCORS();
         this.initializeRatelimits();
         this.initializeMiddlewares();
+        this.app.use(nocache());
         this.initializeRoutes();
         this.initializeErrorHandler();
     }
@@ -43,6 +48,7 @@ export class ExpressServer implements Server<Express> {
     /** Setup the touch points where data flows to. */
     private initializeRoutes() {
         this.app.use('/signup', registrationRouter);
+        this.app.use('/signin', loginRouter);
         this.app.use("/health", (req, res) => res.json("All works!"));
     }
 
