@@ -18,7 +18,7 @@ export default (() => {
     /** Brokers defined for Kafka */
     // KAFKA_BROKERS: (process.env.KAFKA_BROKERS as string).split(','),
     /** The URL of the frontend. */
-    // FRONTEND_URL: process.env.FRONTEND_URL
+    FRONTEND_URL: process.env.FRONTEND_URL as string,
     /** The connection URL of MongoDB database. */
     TWILIO_SID: process.env.TWILIO_SID as string,
     TWILIO_TOKEN: process.env.TWILIO_TOKEN as string,
@@ -27,6 +27,9 @@ export default (() => {
     //email for verification
     MAIL_USERNAME: process.env.MAIL_USERNAME as string,
     MAIL_PASS: process.env.MAIL_PASS as string,
+
+    GOOGLE_OAUTH_CLIENT_ID: process.env.GOOGLE_OAUTH_CLIENT_ID as string,
+    GOOGLE_OAUTH_CLIENT_SECRET: process.env.GOOGLE_OAUTH_CLIENT_SECRET as string
   };
 
   return env;
