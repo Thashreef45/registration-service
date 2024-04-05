@@ -20,32 +20,35 @@ export class LinkedInOAuthManager implements IOAuthManager {
     query.append("grant_type", "authorization_code");
 
     let accessToken = null;
-    let idToken = null;
+    // let idToken = null;
     try {
       const res = await fetch(
-        `https://www.linkedin.com/oauth/v2/authorization?${query.toString()}`,
+        `https://www.linkedin.com/oauth/v2/accessToken?${query.toString()}`,
+        // `https://www.linkedin.com/oauth/v2/authorization?${query.toString()}`,
         { method: "POST", headers: { Accept: "application/json" } }
       );
       const data = await res.json();
-      console.log(data);
+      // console.log(data);
       accessToken = data.access_token;
-      idToken = data.id_token;
+      // idToken = data.id_token;
     } catch (err) {
       console.error(err);
     }
     // todo: take data.scope and validate if it has read:email
     if (!accessToken) return null;
-    if (!idToken) return null;
-
-    console.log("ID TOKEN ==== ");
-    console.log(idToken);
-
-    const linkedInUser = jwt.decode(idToken) as any;
-    // const userName = slugify(linkedInUser.name).toLowerCase();
-    const userEmail = linkedInUser.email;
-    // if (!linkedInUser.email_verified) {
-    //     return null;
-    // }
+    let userData;
+    try {
+      const res = await fetch(
+        "https://api.linkedin.com/v2/userinfo",
+        { method: "GET", headers: { "Authorization": "Bearer " + accessToken } }
+      );
+      userData = await res.json();
+      console.log(userData);
+    } catch (err) {
+      console.error(err);
+      return null;
+    }
+    if (!userData) return null;
 
     const registration = new Registration({
       uuid: "<transient linkedIn oauth entity>",
@@ -60,46 +63,12 @@ export class LinkedInOAuthManager implements IOAuthManager {
     });
 
     registration.email = {
-      id: linkedInUser.email,
-      isVerified: linkedInUser.email_verified,
+      id: userData.email,
+      isVerified: userData.email_verified,
     };
 
-    registration.name = linkedInUser.name;
+    registration.name = userData.name;
 
     return registration;
-
-    // let userData = null;
-    // try {
-    //     console.log('-------user info fetch-----')
-    //     const res = await fetch(
-    //         "https://www.linkedInapis.com/oauth2/v1/userinfo",
-    //         { method: "GET", headers: { "Authorization": "Bearer " + accessToken}}
-    //     );
-    //     userData = await res.json();
-    //     console.log(userData);
-    // } catch (err) {
-    //     console.error(err);
-    //     return null;
-    // }
-
-    // try {
-    //     const res = await fetch(
-    //         "https://api.github.com/user/emails",
-    //         { method: "GET", headers: { "Authorization": "Bearer " + accessToken}}
-    //     );
-    //     const userEmails = await res.json();
-    //     const primaryMail = userEmails.find(entry => entry.primary).email;
-
-    //     const dummyPassword = crypto.randomBytes(8).toString('hex');
-
-    //     const user = new User(null, userData.login, primaryMail, dummyPassword);
-    //     user.githubUsername = userData.login;
-    //     // todo: user.bio = userData.bio; (if first time)
-
-    //     return user;
-    // } catch (err) {
-    //     console.error(err);
-    //     return null;
-    // }
   }
 }
