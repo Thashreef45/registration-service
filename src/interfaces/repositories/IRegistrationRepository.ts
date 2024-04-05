@@ -49,4 +49,6 @@ export default interface IRegistrationRepository {
      * @param registration
      */
     findRegistration(registration: Partial<Registration>): Promise<Registration | null>;
+
+    findByGiggrId(giggrId: string): Promise<Registration | null>;
 }

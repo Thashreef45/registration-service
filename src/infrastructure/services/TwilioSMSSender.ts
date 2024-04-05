@@ -11,7 +11,7 @@ export class TwilioSMSSender implements ISMSService {
     try {
       const option = {
         body: message,
-        to: to, //this will only send otp to indian number.()
+        to: "+" + to, //this will only send otp to indian number.()
         from: "+447883303573",
       };
 

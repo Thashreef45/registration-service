@@ -75,6 +75,18 @@ export default class RegistrationRepositoryMongoDB implements IRegistrationRepos
         }
     }
 
+    async findByGiggrId(giggrId: string): Promise<Registration | null> {
+        console.log("inside fetch", giggrId)
+        try {
+            const registrationDocument = await RegistrationModel.findOne({ giggrId });
+            console.log(registrationDocument);
+            return RegistrationRepositoryMongoDB.mapRegistrationToEntity(registrationDocument);
+        } catch (error) {
+            console.error("Error finding registration by giggrId:", error);
+            return null;
+        }
+    }
+
     async findRegistration(registration: Partial<Registration>): Promise<Registration | null> {
         try {
             const registrationDocument = await RegistrationModel.findOne(registration);

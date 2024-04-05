@@ -6,7 +6,8 @@ const InitiateRegistrationSchema = {
         entity: z.enum(["industry", "institute", "individual"]),
         deviceId: z.string().min(3),
         locationId: z.string().min(3),
-        networkId: z.string().min(3)
+        networkId: z.string().min(3),
+        autofillToken: z.string().optional()
     })
 }
 

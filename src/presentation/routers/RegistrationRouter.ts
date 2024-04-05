@@ -21,6 +21,8 @@ registrationRouter.post("/verify/:field", requireSignupId, validateSchema(Schema
 /** POST /signup/register */
 registrationRouter.post("/register", requireSignupId, Controller.FinishRegistrationPost);
 
+registrationRouter.post('/google', Controller.AuthUserViaGoogle);
+
 registrationRouter.post("/approval", requireSignupId, Controller.RequestApprovalPost);
 registrationRouter.post("/approve", requireSignupId, Controller.AcceptApprovalPost);
 

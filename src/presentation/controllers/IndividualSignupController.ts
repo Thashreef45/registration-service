@@ -25,6 +25,12 @@ import { JWTTokenGenerator } from "../../infrastructure/services/ApprovalTokenMa
 import { TwilioSMSSender } from "../../infrastructure/services/TwilioSMSSender.js";
 import environment from "../../infrastructure/config/environment.js";
 import AcceptApproval from "../../use-cases/interactors/AcceptApproval.js";
+import SignInRequest from "../../use-cases/interactors/SignInRequest.js";
+import { TokenGenerator } from "../../infrastructure/services/JWTTokenGenerator.js";
+import SignInApprove from "../../use-cases/interactors/SignInApprove.js";
+import MyProfile from "../../use-cases/interactors/MyProfile.js";
+import GoogleOAuthManager from "../../infrastructure/services/GoogleOAuthManager.js";
+import GoogleAutofill from "../../use-cases/interactors/GoogleAutofill.js";
 
 const accountIdGenerator = new NanoGiggrIdGenerator();
 const registrationRepository = new RegistrationRepositoryMongoDB();
@@ -33,6 +39,10 @@ const otpManager = new TwilioOTPManager();
 const chatRepository = new ChatRepositoryMongoDB();
 const emailService = new EmailSender();
 const smsService = new TwilioSMSSender();
+
+const tokenGenerator = new TokenGenerator('');
+
+const googleOAuthManger = new GoogleOAuthManager();
 
 // urgent fixme:
 interface IndividualApprovalPayload {
@@ -76,7 +86,7 @@ async function _ChatAssistantGet(req: Request, res: Response): Promise<void> {
 
 export const InitiateRegistrationPost = asyncHandler(_InitiateRegistrationPost);
 async function _InitiateRegistrationPost(req: InitiateRegistrationRequest, res: Response) {
-  const interactor = new InitiateRegistration({ registrationRepository, uuidGenerator });
+  const interactor = new InitiateRegistration({ registrationRepository, uuidGenerator, tokenGenerator });
 
   // todo: req.metadata
   // entity, deviceId, locationId, networkId
@@ -161,7 +171,7 @@ async function _RequestApprovalPost(req: Request, res: Response) {
 
   const interactor = new RequestApproval({ registrationRepository, smsService, emailService, approvalTokenManager: individualApprovalManager, uuidGenerator });
   const output = await interactor.execute({ signupId: req.signupId, phone, email });
-  
+
   res.json(output);
 }
 
@@ -175,8 +185,61 @@ async function _AcceptApprovalPost(req: Request, res: Response) {
     approvalTokenManager: individualApprovalManager,
     emailService
   });
-  
+
   const output = await interactor.execute({ signupId: req.signupId, token });
-  
+
+  res.json(output);
+}
+
+export const SigninRequestPost = asyncHandler(_SigninRequestPost);
+async function _SigninRequestPost(req: Request, res: Response): Promise<void> {
+  const interactor = new SignInRequest({ registrationRepository, otpManager, tokenGenerator, emailService });
+
+  const data = {
+    identifier: req.body.identifier,
+    prefer: req.body.prefer
+  }
+
+  const output = await interactor.execute(data);
+  res.json(output);
+}
+
+export const SigninApprovalPost = asyncHandler(_SigninApprovalPost);
+async function _SigninApprovalPost(req: Request, res: Response): Promise<void> {
+  const accessToken = req.headers["authorization"]?.slice(7) || "";
+
+  const interactor = new SignInApprove({ registrationRepository, otpManager, tokenGenerator });
+
+  const data = {
+    accessToken,
+    otp: req.body.otp
+  }
+
+  const output = await interactor.execute(data);
+  res.json(output);
+}
+
+export const GetUserProfile = asyncHandler(_GetUserProfile);
+async function _GetUserProfile(req: Request, res: Response): Promise<void> {
+  const accessToken = req.headers["authorization"]?.slice(7) || "";
+
+  const interactor = new MyProfile({ registrationRepository, tokenGenerator });
+
+  const data = {
+    accessToken
+  }
+
+  const output = await interactor.execute(data);
+  res.json(output);
+}
+
+export const AuthUserViaGoogle = asyncHandler(_AuthUserViaGoogle);
+async function _AuthUserViaGoogle(req: Request, res: Response): Promise<void> {
+  const { code } = req.body;
+
+  const interactor = new GoogleAutofill({ registrationRepository, tokenGenerator, oAuthManager: googleOAuthManger  })
+
+  const output = await interactor.execute({ code });
+
   res.json(output);
 }

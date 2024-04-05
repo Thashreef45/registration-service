@@ -33,10 +33,10 @@ export default class UpdateRegistration implements IUseCase<Input, Output> {
 
         if (phone && !registration.phone.isVerified) {
             const doesPhoneExist = await this.registrationRepository.findByPhone(phone);
-            if (doesPhoneExist && doesPhoneExist.email.isVerified) {
+            if (doesPhoneExist && doesPhoneExist.phone.isVerified) {
                 throw new AppError("Credentials are invalid.", StatusCode.BAD_REQUEST);
             }
-            registration.phone.number = phone;
+            registration.phone.number = phone.startsWith('+') ? phone.slice(1) : phone;
         }
 
         if (dateOfBirth) {
@@ -49,6 +49,8 @@ export default class UpdateRegistration implements IUseCase<Input, Output> {
 
             if (ageInYears >= 18) {
                 registration.approval.isApproved = true;
+                registration.approval.isRequired = false;
+                registration.approval.isFrom = undefined;
             } else {
                 registration.approval.isRequired = true;
                 registration.approval.isFrom = "guardian";

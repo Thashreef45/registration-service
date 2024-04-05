@@ -6,19 +6,35 @@ import { Registration } from "../../domain/entities/Registration.js";
 import { IUUIDGenerator } from "../../interfaces/services/IUUIDGenerator.js";
 import IOrganizationRepository from "../../interfaces/repositories/IOrganizationRepository.js";
 import { Organization } from "../../domain/entities/Organization.js";
+import { ITokenGenerator } from "../../interfaces/services/ITokenGenerator.js";
+
+interface PrefilledData {
+  email?: {
+    id?: string;
+    isVerified?: boolean;
+  };
+  phone?: {
+    number?: string;
+    isVerified?: boolean;
+  };
+  name?: string;
+  dateofBirth?: string;
+}
 
 export default class InitiateRegistration implements IUseCase<Input, Output> {
   private readonly registrationRepository: IRegistrationRepository;
   // private readonly organizationRepository: IOrganizationRepository;
   private readonly uuidGenerator: IUUIDGenerator;
+  private readonly tokenGenerator: ITokenGenerator;
 
-  constructor({ registrationRepository, uuidGenerator }: Dependencies) {
+  constructor({ registrationRepository, uuidGenerator, tokenGenerator }: Dependencies) {
     this.registrationRepository = registrationRepository;
     // this.organizationRepository = organizationRepository;
     this.uuidGenerator = uuidGenerator;
+    this.tokenGenerator = tokenGenerator;
   }
 
-  async execute({ entity, deviceId, locationId, networkId }: Input): Promise<Output> {
+  async execute({ entity, deviceId, locationId, networkId, autofillToken }: Input): Promise<Output> {
 
     const role = entity === "individual" ? "administrator" : "user";
     
@@ -30,8 +46,38 @@ export default class InitiateRegistration implements IUseCase<Input, Output> {
       role,
       deviceId,
       locationId,
-      networkId
+      networkId,
+      needsApproval: false,
+      isApproved: false
     });
+
+    // A source such as LinkedIn, Google, and such.
+    if (autofillToken) {
+      const data = this.tokenGenerator.verify(autofillToken) as PrefilledData | null;
+      if (data) {
+        if (data.email && data.email.id) {
+          registration.email.id = data.email.id;
+          if (data.email.isVerified) {
+            registration.email.isVerified = true;
+          }
+        }
+
+        if (data.phone && data.phone.number) {
+          registration.phone.number = data.phone.number;
+          if (data.phone.isVerified) {
+            registration.phone.isVerified = true;
+          }
+        }
+
+        if (data.name) {
+          registration.name = data.name;
+        }
+
+        if (data.dateofBirth) {
+          registration.dateOfBirth = new Date(data.dateofBirth);
+        }
+      }
+    }
 
     const didUserPersist = await this.registrationRepository.persist(registration);
     if (didUserPersist != StatusCode.CREATED) {
@@ -64,6 +110,7 @@ interface Dependencies {
   registrationRepository: IRegistrationRepository;
   // organizationRepository: IOrganizationRepository;
   uuidGenerator: IUUIDGenerator;
+  tokenGenerator: ITokenGenerator;
 }
 
 interface Input {
@@ -71,6 +118,7 @@ interface Input {
   deviceId: string;
   locationId: string;
   networkId: string;
+  autofillToken?: string;
 }
 
 interface Output {

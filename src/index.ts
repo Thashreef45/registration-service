@@ -7,7 +7,7 @@ const start = async () => {
     try {
         await bootstrap.init();
 
-        const port = environment.PORT || 3001;
+        const port = 3001; // environment.PORT || 3001;
         const server = new Server(port);
         // todo:
         //  setupStatus(server.app)
