@@ -40,15 +40,15 @@ export class LinkedInOAuthManager implements IOAuthManager {
     console.log("ID TOKEN ==== ");
     console.log(idToken);
 
-    const googleUser = jwt.decode(idToken) as any;
-    // const userName = slugify(googleUser.name).toLowerCase();
-    const userEmail = googleUser.email;
-    // if (!googleUser.email_verified) {
+    const linkedInUser = jwt.decode(idToken) as any;
+    // const userName = slugify(linkedInUser.name).toLowerCase();
+    const userEmail = linkedInUser.email;
+    // if (!linkedInUser.email_verified) {
     //     return null;
     // }
 
     const registration = new Registration({
-      uuid: "<transient google oauth entity>",
+      uuid: "<transient linkedIn oauth entity>",
       entity: "individual",
       role: "administrator",
       deviceId: "",
@@ -60,11 +60,11 @@ export class LinkedInOAuthManager implements IOAuthManager {
     });
 
     registration.email = {
-      id: googleUser.email,
-      isVerified: googleUser.email_verified,
+      id: linkedInUser.email,
+      isVerified: linkedInUser.email_verified,
     };
 
-    registration.name = googleUser.name;
+    registration.name = linkedInUser.name;
 
     return registration;
 
@@ -72,7 +72,7 @@ export class LinkedInOAuthManager implements IOAuthManager {
     // try {
     //     console.log('-------user info fetch-----')
     //     const res = await fetch(
-    //         "https://www.googleapis.com/oauth2/v1/userinfo",
+    //         "https://www.linkedInapis.com/oauth2/v1/userinfo",
     //         { method: "GET", headers: { "Authorization": "Bearer " + accessToken}}
     //     );
     //     userData = await res.json();
