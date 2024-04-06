@@ -108,7 +108,7 @@ export default class GraphRepository implements IGraphRepository {
         try {
             const res = await session.run(
                 `CREATE (e:BaseProfile {name: $name, email: $email, phone: $phone, dateOfBirth: $dateOfBirth,
-                    role:$role, DeviceId:$deviceID
+                    role:$role, DeviceId:$metadata.deviceId
           ${profile.giggrId ? ", GiggrID: $giggrId" : ""} 
           })`,
                 profile
