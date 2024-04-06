@@ -281,7 +281,7 @@ export const GetUserProfile = asyncHandler(_GetUserProfile);
 async function _GetUserProfile(req: Request, res: Response): Promise<void> {
   const accessToken = req.headers["authorization"]?.slice(7) || "";
 
-  const interactor = new MyProfile({ registrationRepository, tokenGenerator });
+  const interactor = new MyProfile({ graphRepository, tokenGenerator });
 
   const data = {
     accessToken,

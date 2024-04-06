@@ -1,40 +1,43 @@
 import { IUseCase } from "../shared/IUseCase.js";
 import StatusCode from "../shared/StatusCodes.js";
 import { AppError } from "../shared/AppError.js";
-import IRegistrationRepository from "../../interfaces/repositories/IRegistrationRepository.js";
+import IGraphRepository from "../../interfaces/repositories/IGraphRepository.js";
 import { ITokenGenerator } from "../../interfaces/services/ITokenGenerator.js";
-import { IOTPManager } from "../../interfaces/services/IOTPManager.js";
-import { Registration } from "../../domain/entities/Registration.js";
+import { OrganizationProfile } from "../../domain/entities/OrganizationProfile.js";
+import { BaseProfile } from "../../domain/entities/BaseProfile.js";
 
-export default class MyProfile implements IUseCase<Input, Registration> {
-  private readonly registrationRepository: IRegistrationRepository;
+interface AccessToken {
+  giggrId: string;
+  access: boolean;
+}
+
+export default class MyProfile implements IUseCase<Input, BaseProfile | OrganizationProfile> {
+  private readonly graphRepository: IGraphRepository;
   private readonly tokenGenerator: ITokenGenerator;
 
-  constructor({ registrationRepository, tokenGenerator }: Dependencies) {
-    this.registrationRepository = registrationRepository;
+  constructor({ graphRepository, tokenGenerator }: Dependencies) {
+    this.graphRepository = graphRepository;
     this.tokenGenerator = tokenGenerator;
   }
 
-  async execute({ accessToken }: Input): Promise<Registration> {
+  async execute({ accessToken }: Input): Promise<BaseProfile | OrganizationProfile> {
 
-    const data: any = this.tokenGenerator.verify(accessToken);
+    const data = this.tokenGenerator.verify(accessToken) as AccessToken | null;
     if (!data) {
         throw new AppError("invalid token", StatusCode.BAD_REQUEST);
     }
 
-    console.log(data);
-
-    let registration = await this.registrationRepository.findByGiggrId(data.giggrID);
-    if (!registration) {
+    let baseProfile = await this.graphRepository.findByGiggrId(data.giggrId);
+    if (!baseProfile) {
         throw new AppError("No registration found", StatusCode.NOT_FOUND);
     }
 
-    return registration;
+    return baseProfile;
   }
 }
 
 interface Dependencies {
-  registrationRepository: IRegistrationRepository;
+  graphRepository: IGraphRepository;
   tokenGenerator: ITokenGenerator;
 }
 
