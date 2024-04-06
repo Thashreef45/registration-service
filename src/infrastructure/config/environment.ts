@@ -29,8 +29,7 @@ export default (() => {
     MAIL_PASS: process.env.MAIL_PASS as string,
 
     GOOGLE_OAUTH_CLIENT_ID: process.env.GOOGLE_OAUTH_CLIENT_ID as string,
-    GOOGLE_OAUTH_CLIENT_SECRET: process.env
-      .GOOGLE_OAUTH_CLIENT_SECRET as string,
+    GOOGLE_OAUTH_CLIENT_SECRET: process.env.GOOGLE_OAUTH_CLIENT_SECRET as string,
 
     LINKEDIN_CLIENT_ID: process.env.LINKEDIN_CLIENT_ID as string,
     LINKEDIN_CLIENT_SECRET: process.env.LINKEDIN_CLIENT_SECRET as string,
