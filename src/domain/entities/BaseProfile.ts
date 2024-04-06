@@ -36,7 +36,7 @@ export class BaseProfile {
     /** The phone number of the user. */
     phone: string;
     /** The date of birth of the user. */
-    dateOfBirth: Date;
+    dateOfBirth: string;
 
     /** The unique, 16 length alphanumeric code assigned to a user. */
     giggrId?: string;
@@ -51,7 +51,7 @@ export class BaseProfile {
         this.phone = phone;
 
         this.name = name;
-        this.dateOfBirth = dateOfBirth;
+        this.dateOfBirth = dateOfBirth.toString();
 
         this.giggrId = giggrId;
     }

@@ -34,6 +34,11 @@ export default (() => {
 
     LINKEDIN_CLIENT_ID: process.env.LINKEDIN_CLIENT_ID as string,
     LINKEDIN_CLIENT_SECRET: process.env.LINKEDIN_CLIENT_SECRET as string,
+
+    //Neo4j
+    NEO_USER: process.env.NEO_USER as string,
+    NEO_URI: process.env.NEO_URI as string,
+    NEO_PASSWORD: process.env.NEO_PASSWORD as string,
   };
 
   return env;

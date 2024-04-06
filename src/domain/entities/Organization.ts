@@ -10,15 +10,15 @@ interface OrganizationAttributes {
 }
 
 export class Organization {
-    /** An unique identifier for the organization. */    
+    /** An unique identifier for the organization. */
     uuid: string;
 
     /** The transient registration id of the administrator. */
     adminUUID: string;
 
-    /** The name of the organization. */    
+    /** The name of the organization. */
     name?: string;
-    
+
     /** The type of entity the organization comes under. */
     entity: "industry" | "institute";
 
@@ -34,7 +34,7 @@ export class Organization {
     constructor({ uuid, adminUUID, name, entity, extension, documents, giggrId }: OrganizationAttributes) {
         this.uuid = uuid;
         this.adminUUID = adminUUID;
-        
+
         this.name = name;
         this.entity = entity;
         this.extension = extension;

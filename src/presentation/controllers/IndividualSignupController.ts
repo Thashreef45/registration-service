@@ -37,6 +37,7 @@ import MyProfile from "../../use-cases/interactors/MyProfile.js";
 import GoogleOAuthManager from "../../infrastructure/services/GoogleOAuthManager.js";
 import GoogleAutofill from "../../use-cases/interactors/GoogleAutofill.js";
 import { LinkedInOAuthManager } from "../../infrastructure/services/LinkedInOAuthManager.js";
+import GraphRepository from "../../infrastructure/repositories/GraphRepository.js";
 
 const accountIdGenerator = new NanoGiggrIdGenerator();
 const registrationRepository = new RegistrationRepositoryMongoDB();
@@ -50,6 +51,7 @@ const tokenGenerator = new TokenGenerator("");
 
 const googleOAuthManger = new GoogleOAuthManager();
 const linkedInOAuthManager = new LinkedInOAuthManager();
+const graphRepository = new GraphRepository();
 
 // urgent fixme:
 interface IndividualApprovalPayload {
@@ -196,6 +198,7 @@ async function _FinishRegistrationPost(req: Request, res: Response) {
   const interactor = new FinishRegistration({
     registrationRepository,
     accountIdGenerator,
+    graphRepository,
   });
   const output = await interactor.execute({ signupId: req.signupId });
   res.json(output);

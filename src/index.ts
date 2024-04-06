@@ -7,7 +7,7 @@ const start = async () => {
     try {
         await bootstrap.init();
 
-        const port = 3001; // environment.PORT || 3001;
+        const port = environment.PORT || 3001;
         const server = new Server(port);
         // todo:
         //  setupStatus(server.app)
@@ -19,11 +19,11 @@ const start = async () => {
             console.log(" ██████╔╝█████╗  ██║  ███╗██║███████╗   ██║   ██████╔╝███████║   ██║   ██║██║   ██║██╔██╗ ██║");
             console.log(" ██╔══██╗██╔══╝  ██║   ██║██║╚════██║   ██║   ██╔══██╗██╔══██║   ██║   ██║██║   ██║██║╚██╗██║");
             console.log(" ██║  ██║███████╗╚██████╔╝██║███████║   ██║   ██║  ██║██║  ██║   ██║   ██║╚██████╔╝██║ ╚████║");
-            console.log(" ╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝");                                                                                       
-                                                                      
+            console.log(" ╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝");
+
             console.log(`[ GIGGR :: REGISTRATION SERVICE ] Registration Service (Primary) is listening on http://localhost:${port}`);
         });
-    } catch (err) { 
+    } catch (err) {
         console.error(err);
         process.exit(1);
     }
