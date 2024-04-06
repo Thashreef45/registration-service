@@ -34,7 +34,7 @@ export default class LoginRequest implements IUseCase<Input, Output> {
       throw new AppError("Organization unavailable", StatusCode.FORBIDDEN);
     }
 
-    const obj = { prefer: prefer, giggrId: baseProfile };
+    const obj = { prefer: prefer, giggrId: baseProfile.giggrId };
     const token = this.tokenGenerator.generate(obj);
 
     if (prefer === "link") {
