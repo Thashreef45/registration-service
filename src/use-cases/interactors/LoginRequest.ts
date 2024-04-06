@@ -22,14 +22,15 @@ export default class LoginRequest implements IUseCase<Input, Output> {
 
   async execute({ identifier, prefer }: Input): Promise<Output> {
 
-    const baseProfile = (await this.graphRepository.findByGiggrId(identifier)) ?? 
-    (await this.graphRepository.findByEmail(identifier)) ?? 
-    (await this.graphRepository.findByPhone(identifier));
+    const baseProfile = (await this.graphRepository.findByGiggrId(identifier)) ??
+      (await this.graphRepository.findByEmail(identifier)) ??
+      (await this.graphRepository.findByPhone(identifier));
+
 
     if (!baseProfile) {
       throw new AppError("Invalid credentials", StatusCode.NOT_FOUND);
     }
-    
+
     if (baseProfile instanceof OrganizationProfile) {
       throw new AppError("Organization unavailable", StatusCode.FORBIDDEN);
     }
@@ -49,7 +50,7 @@ export default class LoginRequest implements IUseCase<Input, Output> {
         throw new AppError("An error occured with sending magic link.", emailStatus);
       }
 
-     return { message: "Check your email for link." };
+      return { message: "Check your email for link." };
     } else {
       const otpTemp = await this.otpManager.generate(6);
 
@@ -58,7 +59,7 @@ export default class LoginRequest implements IUseCase<Input, Output> {
         throw new AppError("An error occured with sending OTP.", otpStatus);
       }
 
-     return { loginToken: token, message: "Check your phone for OTP" };
+      return { loginToken: token, message: "Check your phone for OTP" };
     }
   }
 }
