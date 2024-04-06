@@ -19,7 +19,25 @@ import RetrieveRegistration from "../../use-cases/interactors/RetrieveRegistrati
 import VerifyEmailOTP from "../../use-cases/interactors/VerifyEmailOTP.js";
 import FinishRegistration from "../../use-cases/interactors/FinishRegistration.js";
 
-import {InitiateRegistrationRequest, RequestOTPRequest, UpdateRegistrationRequest, VerifyOTPRequest} from "../schemas/RegistrationSchemas.js";
+import {
+  InitiateRegistrationRequest,
+  RequestOTPRequest,
+  UpdateRegistrationRequest,
+  VerifyOTPRequest,
+} from "../schemas/RegistrationSchemas.js";
+import RequestApproval from "../../use-cases/interactors/RequestApproval.js";
+import { JWTTokenGenerator } from "../../infrastructure/services/ApprovalTokenManager.js";
+import { TwilioSMSSender } from "../../infrastructure/services/TwilioSMSSender.js";
+import environment from "../../infrastructure/config/environment.js";
+import AcceptApproval from "../../use-cases/interactors/AcceptApproval.js";
+import LoginRequest from "../../use-cases/interactors/LoginRequest.js";
+import { TokenGenerator } from "../../infrastructure/services/JWTTokenGenerator.js";
+import LoginApprove from "../../use-cases/interactors/LoginApprove.js";
+import MyProfile from "../../use-cases/interactors/MyProfile.js";
+import GoogleOAuthManager from "../../infrastructure/services/GoogleOAuthManager.js";
+import GoogleAutofill from "../../use-cases/interactors/GoogleAutofill.js";
+import { LinkedInOAuthManager } from "../../infrastructure/services/LinkedInOAuthManager.js";
+import GraphRepository from "../../infrastructure/repositories/GraphRepository.js";
 
 const accountIdGenerator = new NanoGiggrIdGenerator();
 const registrationRepository = new RegistrationRepositoryMongoDB();
@@ -27,19 +45,38 @@ const uuidGenerator = new CryptoUUIDGenerator();
 const otpManager = new TwilioOTPManager();
 const chatRepository = new ChatRepositoryMongoDB();
 const emailService = new EmailSender();
+const smsService = new TwilioSMSSender();
 
+const tokenGenerator = new TokenGenerator("");
+
+const googleOAuthManger = new GoogleOAuthManager();
+const linkedInOAuthManager = new LinkedInOAuthManager();
+const graphRepository = new GraphRepository();
+
+// urgent fixme:
+interface IndividualApprovalPayload {
+  email?: string;
+  phone?: string;
+  uuid: string;
+}
+const individualApprovalManager =
+  new JWTTokenGenerator<IndividualApprovalPayload>(environment.JWT_SECRET);
 
 export const ChatAssistant = asyncHandler(_ChatAssistant);
 async function _ChatAssistant(req: Request, res: Response): Promise<void> {
   const signupId = req.headers["authorization"]?.slice(7) || "";
   const signupAssistant = new ChatGPTSignupAssistant(signupId);
 
-  const interactor = new Converse({ registrationRepository, chatRepository, signupAssistant });
+  const interactor = new Converse({
+    registrationRepository,
+    chatRepository,
+    signupAssistant,
+  });
 
   const data = {
     signupId,
-    message: req.body.message
-  }
+    message: req.body.message,
+  };
 
   const output = await interactor.execute(data);
   res.json(output);
@@ -50,19 +87,30 @@ async function _ChatAssistantGet(req: Request, res: Response): Promise<void> {
   const signupId = req.headers["authorization"]?.slice(7) || "";
   const signupAssistant = new ChatGPTSignupAssistant(signupId);
 
-  const interactor = new GetConversation({ registrationRepository, chatRepository, signupAssistant });
+  const interactor = new GetConversation({
+    registrationRepository,
+    chatRepository,
+    signupAssistant,
+  });
 
   const data = {
-    signupId
-  }
+    signupId,
+  };
 
   const output = await interactor.execute(data);
   res.json(output);
 }
 
 export const InitiateRegistrationPost = asyncHandler(_InitiateRegistrationPost);
-async function _InitiateRegistrationPost(req: InitiateRegistrationRequest, res: Response) {
-  const interactor = new InitiateRegistration({ registrationRepository, uuidGenerator });
+async function _InitiateRegistrationPost(
+  req: InitiateRegistrationRequest,
+  res: Response
+) {
+  const interactor = new InitiateRegistration({
+    registrationRepository,
+    uuidGenerator,
+    tokenGenerator,
+  });
 
   // todo: req.metadata
   // entity, deviceId, locationId, networkId
@@ -82,9 +130,11 @@ async function _RetrieveRegistrationGet(req: Request, res: Response) {
   res.json(result);
 }
 
-
-export const UpdateRegistrationPatch = asyncHandler(_UpdateRegistrationPatch)
-async function _UpdateRegistrationPatch(req: UpdateRegistrationRequest, res: Response) {
+export const UpdateRegistrationPatch = asyncHandler(_UpdateRegistrationPatch);
+async function _UpdateRegistrationPatch(
+  req: UpdateRegistrationRequest,
+  res: Response
+) {
   const interactor = new UpdateRegistration({ registrationRepository });
 
   const output = await interactor.execute({
@@ -93,30 +143,36 @@ async function _UpdateRegistrationPatch(req: UpdateRegistrationRequest, res: Res
     name: req.body.name,
     email: req.body.email,
     phone: req.body.phone,
-    dateOfBirth: req.body.dateOfBirth
+    dateOfBirth: req.body.dateOfBirth,
   });
 
-  res.json(output)
+  res.json(output);
 }
 
-export const RequestOTPGet = asyncHandler(_ReqOTPGet)
+export const RequestOTPGet = asyncHandler(_ReqOTPGet);
 async function _ReqOTPGet(req: RequestOTPRequest, res: Response) {
   const field = req.params.field as "phone" | "email";
 
   if (field === "email") {
-    const interactor = new RequestEmailOTP({ registrationRepository, emailService });
+    const interactor = new RequestEmailOTP({
+      registrationRepository,
+      emailService,
+    });
     const output = await interactor.execute({ signupId: req.signupId });
     res.json(output);
   } else if (field === "phone") {
-    const interactor = new RequestPhoneOTP({ registrationRepository, otpManager });
+    const interactor = new RequestPhoneOTP({
+      registrationRepository,
+      otpManager,
+    });
     const output = await interactor.execute({ signupId: req.signupId });
     res.json(output);
   } else {
-    res.status(400).json({ message: ":field must be phone/email" })
+    res.status(400).json({ message: ":field must be phone/email" });
   }
 }
 
-export const VerifyOTPPost = asyncHandler(_VerifyOTPPost)
+export const VerifyOTPPost = asyncHandler(_VerifyOTPPost);
 async function _VerifyOTPPost(req: VerifyOTPRequest, res: Response) {
   const field = req.params.field;
   const otp = req.body.otp;
@@ -126,17 +182,144 @@ async function _VerifyOTPPost(req: VerifyOTPRequest, res: Response) {
     const output = await interactor.execute({ signupId: req.signupId, otp });
     res.json(output);
   } else if (field === "phone") {
-    const interactor = new VerifyPhoneOTP({ registrationRepository, otpManager });
+    const interactor = new VerifyPhoneOTP({
+      registrationRepository,
+      otpManager,
+    });
     const output = await interactor.execute({ signupId: req.signupId, otp });
     res.json(output);
   } else {
-    res.status(400).json({ message: ":field must be phone/email" })
+    res.status(400).json({ message: ":field must be phone/email" });
   }
 }
 
-export const FinishRegistrationPost = asyncHandler(_FinishRegistrationPost)
+export const FinishRegistrationPost = asyncHandler(_FinishRegistrationPost);
 async function _FinishRegistrationPost(req: Request, res: Response) {
-  const interactor = new FinishRegistration({ registrationRepository, accountIdGenerator })
+  const interactor = new FinishRegistration({
+    registrationRepository,
+    accountIdGenerator,
+    graphRepository,
+  });
   const output = await interactor.execute({ signupId: req.signupId });
+  res.json(output);
+}
+
+export const RequestApprovalPost = asyncHandler(_RequestApprovalPost);
+async function _RequestApprovalPost(req: Request, res: Response) {
+  const { phone, email } = req.body;
+
+  const interactor = new RequestApproval({
+    registrationRepository,
+    smsService,
+    emailService,
+    approvalTokenManager: individualApprovalManager,
+    uuidGenerator,
+  });
+  const output = await interactor.execute({
+    signupId: req.signupId,
+    phone,
+    email,
+  });
+
+  res.json(output);
+}
+
+export const AcceptApprovalPost = asyncHandler(_AcceptApprovalPost);
+async function _AcceptApprovalPost(req: Request, res: Response) {
+  const { token } = req.body;
+
+  const interactor = new AcceptApproval({
+    registrationRepository,
+    smsService,
+    approvalTokenManager: individualApprovalManager,
+    emailService,
+  });
+
+  const output = await interactor.execute({ signupId: req.signupId, token });
+
+  res.json(output);
+}
+
+export const LoginRequestPost = asyncHandler(_LoginRequestPost);
+async function _LoginRequestPost(req: Request, res: Response): Promise<void> {
+  const interactor = new LoginRequest({
+    graphRepository,
+    otpManager,
+    tokenGenerator,
+    emailService,
+  });
+
+  const data = {
+    identifier: req.body.identifier,
+    prefer: req.body.prefer,
+  };
+
+  const output = await interactor.execute(data);
+  res.json(output);
+}
+
+export const LoginApprovalPost = asyncHandler(_LoginApprovalPost);
+async function _LoginApprovalPost(req: Request, res: Response): Promise<void> {
+  const loginToken = req.headers["authorization"]?.slice(7) || "";
+
+  const interactor = new LoginApprove({
+    graphRepository,
+    otpManager,
+    tokenGenerator,
+  });
+
+  const data = {
+    loginToken,
+    otp: req.body.otp,
+  };
+
+  const output = await interactor.execute(data);
+  res.json(output);
+}
+
+export const GetUserProfile = asyncHandler(_GetUserProfile);
+async function _GetUserProfile(req: Request, res: Response): Promise<void> {
+  const accessToken = req.headers["authorization"]?.slice(7) || "";
+
+  const interactor = new MyProfile({ graphRepository, tokenGenerator });
+
+  const data = {
+    accessToken,
+  };
+
+  const output = await interactor.execute(data);
+  res.json(output);
+}
+
+export const AuthUserViaGoogle = asyncHandler(_AuthUserViaGoogle);
+async function _AuthUserViaGoogle(req: Request, res: Response): Promise<void> {
+  const { code } = req.body;
+
+  const interactor = new GoogleAutofill({
+    registrationRepository,
+    tokenGenerator,
+    oAuthManager: googleOAuthManger,
+  });
+
+  const output = await interactor.execute({ code });
+
+  res.json(output);
+}
+
+export const AuthUserViaLinkedin = asyncHandler(_AuthUserViaLinkedin);
+async function _AuthUserViaLinkedin(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const { code } = req.body;
+
+  const interactor = new GoogleAutofill({
+    registrationRepository,
+    tokenGenerator,
+    oAuthManager: linkedInOAuthManager,
+  });
+
+  const output = await interactor.execute({ code });
+
   res.json(output);
 }

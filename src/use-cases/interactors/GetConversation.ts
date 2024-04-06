@@ -20,7 +20,7 @@ export default class GetConversation implements IUseCase<Input, Output> {
 
     // verify signup id to be proper.
     const registration = await this.registrationRepository.findByUUID(signupId);
-    if (!registration) {
+    if (!registration || registration.giggrId) {
       throw new AppError("No registration found", StatusCode.NOT_FOUND);
     }
 
