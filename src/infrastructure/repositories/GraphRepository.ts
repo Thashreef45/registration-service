@@ -5,6 +5,7 @@ import { BaseProfile } from "../../domain/entities/BaseProfile.js";
 import { Organization } from "../../domain/entities/Organization.js";
 import { getDefaultAutoSelectFamily } from "net";
 import StatusCode from "../../use-cases/shared/StatusCodes.js";
+import { OrganizationProfile } from "../../domain/entities/OrganizationProfile.js";
 
 const driver = neo4j.driver(
     env.NEO_URI,
@@ -15,7 +16,7 @@ const session = driver.session();
 export default class GraphRepository implements IGraphRepository {
     async findByGiggrId(
         giggrId: string
-    ): Promise<BaseProfile | Organization | null> {
+    ): Promise<BaseProfile | OrganizationProfile | null> {
         try {
             const result = await session.run(
                 `MATCH (p:User {GiggrID: $giggrId})
@@ -117,7 +118,7 @@ export default class GraphRepository implements IGraphRepository {
             await session.close();
         }
     }
-    async createOrganization(organization: Organization): Promise<StatusCode> {
+    async createOrganization(organization: OrganizationProfile): Promise<StatusCode> {
         try {
             const res = await session.run(
                 `CREATE (e:${organization.entity} {GiggrID: $giggrId, extension: $extension, adminUUID:$adminUUID})`,
