@@ -30,9 +30,9 @@ import { JWTTokenGenerator } from "../../infrastructure/services/ApprovalTokenMa
 import { TwilioSMSSender } from "../../infrastructure/services/TwilioSMSSender.js";
 import environment from "../../infrastructure/config/environment.js";
 import AcceptApproval from "../../use-cases/interactors/AcceptApproval.js";
-import SignInRequest from "../../use-cases/interactors/SignInRequest.js";
+import LoginRequest from "../../use-cases/interactors/LoginRequest.js";
 import { TokenGenerator } from "../../infrastructure/services/JWTTokenGenerator.js";
-import SignInApprove from "../../use-cases/interactors/SignInApprove.js";
+import LoginApprove from "../../use-cases/interactors/LoginApprove.js";
 import MyProfile from "../../use-cases/interactors/MyProfile.js";
 import GoogleOAuthManager from "../../infrastructure/services/GoogleOAuthManager.js";
 import GoogleAutofill from "../../use-cases/interactors/GoogleAutofill.js";
@@ -240,10 +240,10 @@ async function _AcceptApprovalPost(req: Request, res: Response) {
   res.json(output);
 }
 
-export const SigninRequestPost = asyncHandler(_SigninRequestPost);
-async function _SigninRequestPost(req: Request, res: Response): Promise<void> {
-  const interactor = new SignInRequest({
-    registrationRepository,
+export const LoginRequestPost = asyncHandler(_LoginRequestPost);
+async function _LoginRequestPost(req: Request, res: Response): Promise<void> {
+  const interactor = new LoginRequest({
+    graphRepository,
     otpManager,
     tokenGenerator,
     emailService,
@@ -258,18 +258,18 @@ async function _SigninRequestPost(req: Request, res: Response): Promise<void> {
   res.json(output);
 }
 
-export const SigninApprovalPost = asyncHandler(_SigninApprovalPost);
-async function _SigninApprovalPost(req: Request, res: Response): Promise<void> {
-  const accessToken = req.headers["authorization"]?.slice(7) || "";
+export const LoginApprovalPost = asyncHandler(_LoginApprovalPost);
+async function _LoginApprovalPost(req: Request, res: Response): Promise<void> {
+  const loginToken = req.headers["authorization"]?.slice(7) || "";
 
-  const interactor = new SignInApprove({
-    registrationRepository,
+  const interactor = new LoginApprove({
+    graphRepository,
     otpManager,
     tokenGenerator,
   });
 
   const data = {
-    accessToken,
+    loginToken,
     otp: req.body.otp,
   };
 

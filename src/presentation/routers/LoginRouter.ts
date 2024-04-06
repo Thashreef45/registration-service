@@ -3,8 +3,8 @@ import * as Controller from "../controllers/IndividualSignupController.js";
 
 const loginRouter = Router(/* /signup */);
 
-loginRouter.post("/", Controller.SigninRequestPost);
-loginRouter.post("/entry", Controller.SigninApprovalPost);
+loginRouter.post("/", Controller.LoginRequestPost);
+loginRouter.post("/entry", Controller.LoginApprovalPost);
 loginRouter.get("/me", Controller.GetUserProfile);
 
 export default loginRouter;
