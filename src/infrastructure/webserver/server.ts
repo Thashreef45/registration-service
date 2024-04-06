@@ -48,7 +48,7 @@ export class ExpressServer implements Server<Express> {
     /** Setup the touch points where data flows to. */
     private initializeRoutes() {
         this.app.use('/signup', registrationRouter);
-        this.app.use('/signin', loginRouter);
+        this.app.use('/login', loginRouter);
         this.app.use("/health", (req, res) => res.json("All works!"));
     }
 
@@ -70,9 +70,9 @@ export class ExpressServer implements Server<Express> {
         const limiter = ratelimit({
             windowMs: 2 * 60 * 1000,
             max: 100,
-          });
-          
-          this.app.use(limiter);
+        });
+
+        this.app.use(limiter);
     }
 
     /**
