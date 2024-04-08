@@ -77,7 +77,7 @@ export default class FinishRegistration implements IUseCase<Input, Output> {
       //   throw new AppError("Could not create graph node", res);
     }
 
-    if (registration.role === "user") {
+    // if (registration.role === "user") {
 
       const baseProfileData = {
         entity: registration!.entity,
@@ -97,7 +97,7 @@ export default class FinishRegistration implements IUseCase<Input, Output> {
         throw new AppError("Could not create graph node", res);
       }
 
-    }
+    // }
 
 
     return { message: "Account has been created.", giggrId: giggrId };
