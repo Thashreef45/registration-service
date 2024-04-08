@@ -199,6 +199,8 @@ async function _FinishRegistrationPost(req: Request, res: Response) {
     registrationRepository,
     accountIdGenerator,
     graphRepository,
+    emailService,
+    tokenGenerator
   });
   const output = await interactor.execute({ signupId: req.signupId });
   res.json(output);
