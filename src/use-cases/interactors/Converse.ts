@@ -70,6 +70,7 @@ interface Input {
   message: string;
 }
 
+
 interface Output {
   /** A message back from the assistant. */
   reply: string;
